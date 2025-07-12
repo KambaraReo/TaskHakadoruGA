@@ -24,10 +24,12 @@ services:
   # Next.js フロントエンド
   frontend:
     build: ./frontend
+    platform: linux/amd64
     ports:
       - ${NEXTJS_PORT}:3001
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     environment:

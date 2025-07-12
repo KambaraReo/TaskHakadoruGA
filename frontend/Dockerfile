@@ -1,4 +1,4 @@
-FROM node:21.7.1
+FROM node:18
 
 ENV TZ Asia/Tokyo
 
@@ -14,5 +14,5 @@ RUN npm install
 COPY . .
 
 # Next.js dev server を起動（ホストに公開）
-EXPOSE 3000
+EXPOSE 3001
 CMD ["npm","run","dev"]
