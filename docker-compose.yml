@@ -1,0 +1,67 @@
+services:
+  # Rails バックエンド
+  backend:
+    build:
+      context: ./backend
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    ports:
+      - ${RAILS_PORT}:3000
+    volumes:
+      - ./backend:/app
+      - gem_data:/usr/local/bundle
+    depends_on:
+      - db
+      - optimizer
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: ${DATABASE_URL}
+      TZ: Asia/Tokyo
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+
+  # Next.js フロントエンド
+  frontend:
+    build: ./frontend
+    ports:
+      - ${NEXTJS_PORT}:3001
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    environment:
+      TZ: Asia/Tokyo
+    env_file:
+      - .env
+
+  # MySQL データベース
+  db:
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: "Asia/Tokyo"
+    env_file:
+      - .env
+
+  # Optimizer
+  optimizer:
+    build:
+      context: ./optimizer
+    volumes:
+      - ./optimizer:/app
+    ports:
+      - "${OPTIMIZER_PORT}:8000"
+    env_file:
+      - .env
+
+volumes:
+  mysql-data:
+  gem_data:
