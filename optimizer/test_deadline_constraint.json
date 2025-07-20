@@ -1,0 +1,45 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "緊急タスク（締切過ぎ）",
+      "description": "既に締切が過ぎているタスク",
+      "deadline": "2025-01-15T10:00:00.000Z",
+      "duration": 120,
+      "energy_required": 5,
+      "importance": 5,
+      "urgency": 5,
+      "ease": 3,
+      "status": "todo",
+      "dependencies": []
+    },
+    {
+      "id": 2,
+      "title": "通常タスク",
+      "description": "締切に余裕があるタスク",
+      "deadline": "2025-12-31T23:59:59.000Z",
+      "duration": 240,
+      "energy_required": 3,
+      "importance": 3,
+      "urgency": 2,
+      "ease": 4,
+      "status": "todo",
+      "dependencies": []
+    },
+    {
+      "id": 3,
+      "title": "近い締切タスク",
+      "description": "締切が近いタスク",
+      "deadline": "2025-07-21T12:00:00.000Z",
+      "duration": 180,
+      "energy_required": 4,
+      "importance": 4,
+      "urgency": 4,
+      "ease": 3,
+      "status": "todo",
+      "dependencies": []
+    }
+  ],
+  "detailed": true,
+  "max_solutions": 3
+}

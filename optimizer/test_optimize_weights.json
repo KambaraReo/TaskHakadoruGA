@@ -1,0 +1,50 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "要件定義書作成",
+      "description": "プロジェクトの要件を整理し、要件定義書を作成する",
+      "deadline": "2025-07-22T11:32:14.298Z",
+      "duration": 480,
+      "energy_required": 8,
+      "importance": 5,
+      "urgency": 4,
+      "ease": 2,
+      "status": "todo",
+      "dependencies": []
+    },
+    {
+      "id": 2,
+      "title": "設計書作成",
+      "description": "システム設計書とDB設計書を作成する",
+      "deadline": "2025-07-26T11:32:14.298Z",
+      "duration": 720,
+      "energy_required": 9,
+      "importance": 5,
+      "urgency": 3,
+      "ease": 2,
+      "status": "todo",
+      "dependencies": [1]
+    },
+    {
+      "id": 3,
+      "title": "ドキュメント整理",
+      "description": "プロジェクト関連のドキュメントを整理・更新する",
+      "deadline": "2025-08-09T11:32:14.298Z",
+      "duration": 120,
+      "energy_required": 3,
+      "importance": 2,
+      "urgency": 1,
+      "ease": 5,
+      "status": "todo",
+      "dependencies": []
+    }
+  ],
+  "weights": {
+    "importance": 5.0,
+    "urgency": 1.0,
+    "ease": 2.0,
+    "energy": 3.0,
+    "time": 2.5
+  }
+}
