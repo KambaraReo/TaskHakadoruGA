@@ -9,8 +9,8 @@ import {
   AlertTriangle,
   Target,
   TrendingUp,
-  Star,
   Shield,
+  Trash2,
 } from "lucide-react";
 import { format, isBefore, addDays } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -19,13 +19,14 @@ import { cn } from "@/lib/utils";
 interface TaskCardProps {
   task: Task;
   className?: string;
+  onDelete?: (taskId: number) => void;
 }
 
-export function TaskCard({ task, className }: TaskCardProps) {
+export const TaskCard = ({ task, className, onDelete }: TaskCardProps) => {
   // 優先度の計算（重要度 + 緊急度）
   const priorityScore = task.importance + task.urgency;
 
-  // 優先度ランクの決定
+  // 優先度ラベルの決定
   const getPriorityRank = () => {
     if (priorityScore <= 4)
       return {
@@ -115,7 +116,7 @@ export function TaskCard({ task, className }: TaskCardProps) {
   const getDifficultyLevel = (ease: number) => {
     if (ease >= 4) return { text: "簡単", level: "easy" };
     if (ease >= 3) return { text: "普通", level: "normal" };
-    return { text: "困難", level: "hard" };
+    return { text: "難しい", level: "hard" };
   };
 
   const difficultyLevel = getDifficultyLevel(task.ease);
@@ -143,66 +144,55 @@ export function TaskCard({ task, className }: TaskCardProps) {
 
       <div className="task-card-content">
         {/* タスク詳細情報 */}
-        <div className="space-y-1 h-full">
-          {/* タスク詳細（重要度・緊急度・所要時間・エネルギー・難易度・優先度） */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="space-y-2 h-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2">
+            {/* 重要度 */}
             <div className="task-stat">
               <Target className="task-stat-icon" />
               <span>重要度</span>
-              <div className="task-progress ml-auto">
-                <div
-                  className="task-progress-bar"
-                  style={{ width: `${(task.importance / 5) * 100}%` }}
-                />
+              <div className="task-stat-value importance-value px-2 py-1 rounded text-xs font-bold ml-auto">
+                {task.importance}/5
               </div>
-              <span className="text-xs font-bold">{task.importance}/5</span>
             </div>
 
+            {/* 緊急度 */}
             <div className="task-stat">
               <AlertTriangle className="task-stat-icon" />
               <span>緊急度</span>
-              <div className="task-progress ml-auto">
-                <div
-                  className="task-progress-bar"
-                  style={{ width: `${(task.urgency / 5) * 100}%` }}
-                />
+              <div className="task-stat-value urgency-value px-2 py-1 rounded text-xs font-bold ml-auto">
+                {task.urgency}/5
               </div>
-              <span className="text-xs font-bold">{task.urgency}/5</span>
             </div>
+
+            {/* 所要時間 */}
             <div className="task-stat">
               <Clock className="task-stat-icon" />
               <span>所要時間</span>
-              <span className="font-bold ml-auto">
+              <div className="task-stat-value duration-value px-2 py-1 rounded font-bold ml-auto text-xs">
                 {formatDuration(task.duration)}
-              </span>
+              </div>
             </div>
 
+            {/* エネルギー */}
             <div className="task-stat">
               <Zap className="task-stat-icon" />
               <span>エネルギー</span>
-              <span className="font-bold ml-auto">
+              <div className="task-stat-value energy-value px-2 py-1 rounded font-bold ml-auto text-xs">
                 {task.energy_required}/10
-              </span>
+              </div>
             </div>
 
+            {/* 難易度 */}
             <div className="task-stat">
               <Shield className="task-stat-icon" />
               <span>難易度</span>
-              <span className="text-xs font-bold ml-auto">
+              <div className="task-stat-value difficulty-value px-2 py-1 rounded text-xs font-bold ml-auto">
                 {difficultyLevel.text}
-              </span>
-            </div>
-
-            <div className="task-stat">
-              <Star className="task-stat-icon" />
-              <span>優先度</span>
-              <span className="text-xs font-bold ml-auto">
-                {priorityScore}/10
-              </span>
+              </div>
             </div>
           </div>
 
-          {/* 締切情報 */}
+          {/* 期限 */}
           {task.deadline && (
             <div className="task-stat flex-wrap">
               <Calendar className="task-stat-icon" />
@@ -217,7 +207,9 @@ export function TaskCard({ task, className }: TaskCardProps) {
                     : "deadline-normal"
                 )}
               >
-                {format(new Date(task.deadline), "MM/dd HH:mm", { locale: ja })}
+                {format(new Date(task.deadline), "MM/dd HH:mm", {
+                  locale: ja,
+                })}
                 {deadlineStatus === "overdue" && " (期限切れ)"}
                 {deadlineStatus === "urgent" && " (間近)"}
               </div>
@@ -226,7 +218,7 @@ export function TaskCard({ task, className }: TaskCardProps) {
 
           {/* 依存関係 */}
           {task.dependencies.length > 0 && (
-            <div className="task-stat flex-wrap">
+            <div className="task-stat flex-wrap !mt-4">
               <TrendingUp className="task-stat-icon" />
               <span>依存タスク</span>
               <div className="flex gap-1 flex-wrap ml-auto">
@@ -247,18 +239,14 @@ export function TaskCard({ task, className }: TaskCardProps) {
           <span>{statusConfig.label}</span>
         </div>
 
-        <div className="priority-stars">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={cn(
-                "w-3 h-3",
-                i < Math.ceil(priorityScore / 2) ? "star-filled" : "star-empty"
-              )}
-            />
-          ))}
-        </div>
+        <button
+          onClick={() => onDelete?.(task.id)}
+          className="delete-button p-2 rounded-full hover:bg-red-300 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
+          title="タスクを削除"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
-}
+};
