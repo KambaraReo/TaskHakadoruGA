@@ -1,11 +1,16 @@
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 interface TaskSearchProps {
   searchTerm: string;
   onSearchChange: (term: string) => void;
+  onAddTask: () => void;
 }
 
-export const TaskSearch = ({ searchTerm, onSearchChange }: TaskSearchProps) => {
+export const TaskSearch = ({
+  searchTerm,
+  onSearchChange,
+  onAddTask,
+}: TaskSearchProps) => {
   return (
     <div className="search-section">
       <div className="search-container">
@@ -18,6 +23,14 @@ export const TaskSearch = ({ searchTerm, onSearchChange }: TaskSearchProps) => {
           className="search-input"
         />
       </div>
+      <button
+        onClick={onAddTask}
+        className="add-task-button"
+        title="新しいタスクを追加"
+      >
+        <Plus className="w-4 h-4" />
+        追加
+      </button>
     </div>
   );
 };

@@ -340,8 +340,13 @@ body {
 
 .search-container {
   position: relative;
-  max-width: 400px;
   width: 100%;
+}
+
+@media (min-width: 767px) {
+  .search-container {
+    max-width: 400px;
+  }
 }
 
 .search-input {
@@ -545,7 +550,7 @@ body {
 
 .task-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
   grid-auto-rows: 1fr; /* 各行の高さを均一にする */
   padding-bottom: 2rem; /* 最後のカードの下に余白 */
@@ -686,6 +691,7 @@ body {
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .task-stat-icon {
@@ -698,6 +704,7 @@ body {
 .task-stat-value {
   color: white;
   background-color: var(--primary);
+  white-space: nowrap;
 }
 
 .task-progress {
@@ -930,6 +937,7 @@ body {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
 /* タスクカードの高さを統一するための追加スタイル */
 .space-y-3 {
   display: flex;
@@ -942,6 +950,7 @@ body {
 .task-stat:last-child {
   margin-top: auto;
 }
+
 /* 優先度別ホバー効果 */
 .task-card.priority-low:hover {
   border-color: var(--priority-low);
@@ -1005,6 +1014,7 @@ body {
 .task-card:hover .priority-stars .star-filled {
   filter: brightness(1.3) drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
 }
+
 /* 画面サイズが狭いときのタスク詳細表示調整 */
 @media (max-width: 640px) {
   .task-stat {
@@ -1022,6 +1032,7 @@ body {
     margin-right: 4px;
   }
 }
+
 /* グリッドレイアウトの調整 */
 @media (min-width: 640px) {
   .task-card-content .grid {
@@ -1032,5 +1043,328 @@ body {
 @media (min-width: 767px) {
   .task-card-content .grid {
     column-gap: 2.5rem;
+  }
+}
+
+/* ===== モーダル ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 10px 25px rgba(139, 69, 19, 0.2),
+    inset 0 2px 0 rgba(245, 230, 211, 0.3);
+  border: 2px solid var(--border);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.modal-title {
+  font-family: "Cinzel", "Georgia", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.modal-close-button:hover {
+  background-color: rgba(139, 69, 19, 0.1);
+  color: var(--primary);
+}
+
+.modal-body {
+  padding: 0 1.5rem 1.5rem;
+}
+
+/* ===== フォーム ===== */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-family: "Cinzel", "Georgia", serif;
+}
+
+.form-label.required::after {
+  content: "*";
+  color: #dc2626;
+  margin-right: 0.25rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--card-foreground);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+.form-input-error {
+  border-color: #dc2626;
+}
+
+.form-input-error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.form-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.form-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-button-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.form-button-primary:hover:not(:disabled) {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.form-button-secondary {
+  background: transparent;
+  color: var(--muted-foreground);
+  border-color: var(--border);
+}
+
+.form-button-secondary:hover:not(:disabled) {
+  background: var(--muted);
+  color: var(--card-foreground);
+  border-color: var(--primary);
+}
+
+/* ===== 追加ボタン ===== */
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.add-task-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Cinzel", "Georgia", serif;
+}
+
+.add-task-button:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-task-button {
+    justify-content: center;
+  }
+}
+/* datetime-localのクリック領域を拡大 */
+.datetime-input {
+  cursor: pointer;
+  position: relative;
+}
+
+.datetime-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* 右端にシンプルなカレンダーアイコンを表示 */
+.datetime-input::after {
+  content: "";
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary);
+  border-radius: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 25%,
+    var(--primary) 25%,
+    var(--primary) 35%,
+    transparent 35%,
+    transparent 65%,
+    var(--primary) 65%,
+    var(--primary) 75%,
+    transparent 75%
+  );
+}
+
+/* カレンダーの上部（日付部分）を表現 */
+.datetime-input::before {
+  content: "";
+  position: absolute;
+  right: 0.9rem;
+  top: calc(50% - 6px);
+  pointer-events: none;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 1px;
+}
+/* プレースホルダーの色を黒に変更 */
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #000000;
+  opacity: 0.7;
+}
+
+/* ダークモードでも黒を維持 */
+@media (prefers-color-scheme: dark) {
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: #000000;
+    opacity: 0.7;
   }
 }
