@@ -12,6 +12,7 @@ import { Modal } from "./Modal";
 import { TaskForm, TaskFormData } from "./TaskForm";
 import { taskApi } from "@/lib/api";
 import { Task } from "@/types/task";
+import toast from "react-hot-toast";
 
 type SortOption = "priority" | "deadline" | "duration" | "created_at";
 type FilterOption = "all" | "todo" | "in_progress" | "completed" | "cancelled";
@@ -90,9 +91,19 @@ export const TaskList = () => {
       // タスク一覧を再取得
       await refetch();
       handleCloseModal();
+
+      // 成功トースト
+      toast.success(
+        editingTask ? "タスクを更新しました" : "タスクを作成しました"
+      );
     } catch (error) {
       console.error("タスクの保存に失敗しました:", error);
-      // エラーハンドリング（必要に応じてトースト通知など）
+      // エラートースト
+      toast.error(
+        `タスクの保存に失敗しました: ${
+          error instanceof Error ? error.message : "不明なエラー"
+        }`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -106,9 +117,14 @@ export const TaskList = () => {
     try {
       await taskApi.deleteTask(taskId);
       await refetch();
+      toast.success("タスクを削除しました");
     } catch (error) {
       console.error("タスクの削除に失敗しました:", error);
-      // エラーハンドリング（必要に応じてトースト通知など）
+      toast.error(
+        `タスクの削除に失敗しました: ${
+          error instanceof Error ? error.message : "不明なエラー"
+        }`
+      );
     }
   };
 
