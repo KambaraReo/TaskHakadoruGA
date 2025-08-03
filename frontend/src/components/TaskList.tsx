@@ -65,12 +65,26 @@ export const TaskList = () => {
   const handleSubmitTask = async (taskData: TaskFormData) => {
     setIsSubmitting(true);
     try {
+      // TaskFormDataをTask型に変換
+      const taskPayload = {
+        title: taskData.title,
+        description: taskData.description || "",
+        importance: taskData.importance,
+        urgency: taskData.urgency,
+        duration: taskData.duration,
+        energy_required: taskData.energy_required,
+        ease: taskData.ease,
+        deadline: taskData.deadline || undefined,
+        dependencies: taskData.dependencies,
+        status: taskData.status,
+      };
+
       if (editingTask) {
-        // 編集モード
-        await taskApi.updateTask(editingTask.id, taskData);
+        // 編集
+        await taskApi.updateTask(editingTask.id, taskPayload);
       } else {
-        // 新規作成モード
-        await taskApi.createTask(taskData);
+        // 新規作成
+        await taskApi.createTask(taskPayload);
       }
 
       // タスク一覧を再取得

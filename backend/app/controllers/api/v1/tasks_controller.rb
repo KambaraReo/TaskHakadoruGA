@@ -1,5 +1,5 @@
 class Api::V1::TasksController < Api::V1::BaseController
-  before_action :set_task, only: [:show, :destroy]
+  before_action :set_task, only: [:show, :update, :destroy]
 
   # GET /api/v1/tasks
   def index
@@ -18,6 +18,15 @@ class Api::V1::TasksController < Api::V1::BaseController
 
     if @task.save
       render json: @task, status: :created
+    else
+      render json: { errors: @task.errors }, status: :unprocessable_entity
+    end
+  end
+
+  # PUT /api/v1/tasks/:id
+  def update
+    if @task.update(task_params)
+      render json: @task
     else
       render json: { errors: @task.errors }, status: :unprocessable_entity
     end
