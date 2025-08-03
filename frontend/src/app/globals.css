@@ -1368,3 +1368,11 @@ body {
     opacity: 0.7;
   }
 }
+.status-cancelled {
+  background: #979797;
+  color: white;
+}
+
+.stat-cancelled .stat-number {
+  color: #979797;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { TaskStats } from "./TaskStats";
@@ -14,7 +14,7 @@ import { taskApi } from "@/lib/api";
 import { Task } from "@/types/task";
 
 type SortOption = "priority" | "deadline" | "duration" | "created_at";
-type FilterOption = "all" | "todo" | "in_progress" | "done";
+type FilterOption = "all" | "todo" | "in_progress" | "completed" | "cancelled";
 
 export const TaskList = () => {
   const [searchTerm, setSearchTerm] = useState("");

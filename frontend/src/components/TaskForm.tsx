@@ -34,7 +34,7 @@ export interface TaskFormData {
   ease: number;
   deadline?: string;
   dependencies: number[];
-  status: "todo" | "in_progress" | "done";
+  status: "todo" | "in_progress" | "completed" | "cancelled";
 }
 
 export const TaskForm = ({
@@ -271,7 +271,11 @@ export const TaskForm = ({
             onChange={(e) =>
               handleInputChange(
                 "status",
-                e.target.value as "todo" | "in_progress" | "done"
+                e.target.value as
+                  | "todo"
+                  | "in_progress"
+                  | "completed"
+                  | "cancelled"
               )
             }
             className="form-select"
@@ -279,7 +283,8 @@ export const TaskForm = ({
           >
             <option value="todo">未着手</option>
             <option value="in_progress">進行中</option>
-            <option value="done">完了</option>
+            <option value="completed">完了</option>
+            <option value="cancelled">キャンセル</option>
           </select>
         </FormField>
       </FormRow>

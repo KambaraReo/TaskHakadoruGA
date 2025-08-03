@@ -2,7 +2,7 @@ import { Filter, SortAsc, SortDesc } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SortOption = "priority" | "deadline" | "duration" | "created_at";
-type FilterOption = "all" | "todo" | "in_progress" | "done";
+type FilterOption = "all" | "todo" | "in_progress" | "completed" | "cancelled";
 
 interface TaskControlsProps {
   filterBy: FilterOption;
@@ -35,7 +35,8 @@ export const TaskControls = ({
               { key: "all", label: "全て" },
               { key: "todo", label: "未着手" },
               { key: "in_progress", label: "進行中" },
-              { key: "done", label: "完了" },
+              { key: "completed", label: "完了" },
+              { key: "cancelled", label: "キャンセル" },
             ] as { key: FilterOption; label: string }[]
           ).map(({ key, label }) => (
             <button

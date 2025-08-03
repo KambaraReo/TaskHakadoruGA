@@ -87,7 +87,7 @@ export const formatDuration = (minutes: number): string => {
 // ステータス設定を取得
 export const getStatusConfig = (status: Task["status"]) => {
   switch (status) {
-    case "done":
+    case "completed":
       return {
         label: "完了",
         badgeClass: "status-badge status-completed",
@@ -96,6 +96,11 @@ export const getStatusConfig = (status: Task["status"]) => {
       return {
         label: "進行中",
         badgeClass: "status-badge status-active",
+      };
+    case "cancelled":
+      return {
+        label: "キャンセル",
+        badgeClass: "status-badge status-cancelled",
       };
     default:
       return {
