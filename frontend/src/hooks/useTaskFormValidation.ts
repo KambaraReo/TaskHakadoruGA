@@ -16,6 +16,11 @@ export const useTaskFormValidation = () => {
       newErrors.title = "タイトルは必須です";
     }
 
+    // 説明文字数チェック
+    if (formData.description && formData.description.length > 200) {
+      newErrors.description = "説明は200文字以内で入力してください";
+    }
+
     // 整数値チェック
     if (
       !Number.isInteger(formData.importance) ||

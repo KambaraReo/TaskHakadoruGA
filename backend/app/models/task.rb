@@ -10,6 +10,7 @@ class Task < ApplicationRecord
   enum :status, { todo: 'todo', in_progress: 'in_progress', completed: 'completed', cancelled: 'cancelled' }
 
   validates :title, presence: true
+  validates :description, length: { maximum: 200 }
   validates :duration, presence: true, numericality: { greater_than: 0 }
   validates :energy_required, inclusion: { in: 1..10 }
   validates :importance, inclusion: { in: 1..5 }

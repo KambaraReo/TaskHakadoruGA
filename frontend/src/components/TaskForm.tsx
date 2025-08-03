@@ -122,13 +122,16 @@ export const TaskForm = ({
       </FormField>
 
       {/* 説明 */}
-      <FormField label="説明" htmlFor="description">
+      <FormField label="説明" htmlFor="description" error={errors.description}>
         <textarea
           id="description"
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
-          className="form-textarea"
-          placeholder="タスクの説明を入力"
+          className={cn(
+            "form-textarea",
+            errors.description && "form-input-error"
+          )}
+          placeholder="タスクの説明を入力（200文字以内）"
           rows={3}
           disabled={isLoading}
         />

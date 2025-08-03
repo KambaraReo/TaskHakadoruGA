@@ -108,6 +108,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
       {
         task: {
           title: "",
+          description: "a" * 201, # 201文字で文字数制限違反
           duration: -1,
           energy_required: 15
         }
@@ -173,6 +174,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
       {
         task: {
           title: "",
+          description: "a" * 201, # 201文字で文字数制限違反
           duration: -1,
           energy_required: 15
         }
