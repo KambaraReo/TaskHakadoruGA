@@ -22,7 +22,7 @@ export const useTaskFormValidation = () => {
       formData.importance < 1 ||
       formData.importance > 5
     ) {
-      newErrors.importance = "重要度は1-5の整数で入力してください";
+      newErrors.importance = "重要度は1-5の範囲で入力してください";
     }
 
     if (
@@ -30,11 +30,11 @@ export const useTaskFormValidation = () => {
       formData.urgency < 1 ||
       formData.urgency > 5
     ) {
-      newErrors.urgency = "緊急度は1-5の整数で入力してください";
+      newErrors.urgency = "緊急度は1-5の範囲で入力してください";
     }
 
-    if (!Number.isInteger(formData.duration) || formData.duration < 1) {
-      newErrors.duration = "所要時間は1以上の整数で入力してください";
+    if (!formData.duration || formData.duration <= 0) {
+      newErrors.duration = "所要時間は1以上で入力してください";
     }
 
     if (
@@ -42,7 +42,7 @@ export const useTaskFormValidation = () => {
       formData.energy_required < 1 ||
       formData.energy_required > 10
     ) {
-      newErrors.energy_required = "エネルギーは1-10の整数で入力してください";
+      newErrors.energy_required = "エネルギーは1-10の範囲で入力してください";
     }
 
     if (
@@ -50,7 +50,7 @@ export const useTaskFormValidation = () => {
       formData.ease < 1 ||
       formData.ease > 5
     ) {
-      newErrors.ease = "難易度は1-5の整数で入力してください";
+      newErrors.ease = "難易度は1-5の範囲で入力してください";
     }
 
     setErrors(newErrors);
