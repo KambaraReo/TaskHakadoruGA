@@ -12,117 +12,45 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
-import { format, isBefore, addDays } from "date-fns";
+import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import {
+  getPriorityRank,
+  getDifficultyLevel,
+  getDeadlineStatus,
+  formatDuration,
+  getStatusConfig,
+} from "@/utils/taskUtils";
 
 interface TaskCardProps {
   task: Task;
   className?: string;
   onDelete?: (taskId: number) => void;
+  onEdit?: (task: Task) => void;
 }
 
-export const TaskCard = ({ task, className, onDelete }: TaskCardProps) => {
-  // 優先度の計算（重要度 + 緊急度）
-  const priorityScore = task.importance + task.urgency;
-
-  // 優先度ラベルの決定
-  const getPriorityRank = () => {
-    if (priorityScore <= 4)
-      return {
-        rank: "low",
-        name: "低",
-        color: "priority-badge-low",
-        cardClass: "task-card priority-low",
-      };
-    if (priorityScore <= 6)
-      return {
-        rank: "medium",
-        name: "中",
-        color: "priority-badge-medium",
-        cardClass: "task-card priority-medium",
-      };
-    if (priorityScore <= 8)
-      return {
-        rank: "high",
-        name: "高",
-        color: "priority-badge-high",
-        cardClass: "task-card priority-high",
-      };
-    return {
-      rank: "urgent",
-      name: "緊急",
-      color: "priority-badge-urgent",
-      cardClass: "task-card priority-urgent",
-    };
-  };
-
-  const priorityRank = getPriorityRank();
-
-  // 締切の状態を判定
-  const getDeadlineStatus = () => {
-    if (!task.deadline) return "none";
-
-    const deadline = new Date(task.deadline);
-    const now = new Date();
-    const threeDaysFromNow = addDays(now, 3);
-
-    if (isBefore(deadline, now)) return "overdue";
-    if (isBefore(deadline, threeDaysFromNow)) return "urgent";
-    return "normal";
-  };
-
-  const deadlineStatus = getDeadlineStatus();
-
-  // ステータスに応じた設定
-  const getStatusConfig = () => {
-    switch (task.status) {
-      case "done":
-        return {
-          label: "完了",
-          badgeClass: "status-badge status-completed",
-        };
-      case "in_progress":
-        return {
-          label: "進行中",
-          badgeClass: "status-badge status-active",
-        };
-      default:
-        return {
-          label: "未着手",
-          badgeClass: "status-badge status-pending",
-        };
-    }
-  };
-
-  const statusConfig = getStatusConfig();
-
-  const formatDuration = (minutes: number) => {
-    // 時間/分で表示
-    // const hours = Math.floor(minutes / 60);
-    // const mins = minutes % 60;
-    // if (hours > 0) {
-    //   return mins > 0 ? `${hours}h${mins}min` : `${hours}h`;
-    // }
-    // return `${mins}分`;
-
-    // 時間で表示
-    const hours = minutes / 60;
-    // 小数点以下2桁まで表示し、末尾の0は削除
-    return `${hours.toFixed(2).replace(/\.?0+$/, "")}h`;
-  };
-
-  // 難易度レベル表示
-  const getDifficultyLevel = (ease: number) => {
-    if (ease >= 4) return { text: "簡単", level: "easy" };
-    if (ease >= 3) return { text: "普通", level: "normal" };
-    return { text: "難しい", level: "hard" };
-  };
-
+export const TaskCard = ({
+  task,
+  className,
+  onDelete,
+  onEdit,
+}: TaskCardProps) => {
+  // ユーティリティ関数を使用
+  const priorityRank = getPriorityRank(task.importance, task.urgency);
+  const deadlineStatus = getDeadlineStatus(task.deadline);
+  const statusConfig = getStatusConfig(task.status);
   const difficultyLevel = getDifficultyLevel(task.ease);
 
+  const handleCardClick = () => {
+    onEdit?.(task);
+  };
+
   return (
-    <div className={cn(priorityRank.cardClass, className)}>
+    <div
+      className={cn(priorityRank.cardClass, className, "cursor-pointer")}
+      onClick={handleCardClick}
+    >
       {/* タスクカードヘッダー */}
       <div className="task-card-header">
         <div className="flex items-start justify-between mb-3">
@@ -145,7 +73,7 @@ export const TaskCard = ({ task, className, onDelete }: TaskCardProps) => {
       <div className="task-card-content">
         {/* タスク詳細情報 */}
         <div className="space-y-2 h-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {/* 重要度 */}
             <div className="task-stat">
               <Target className="task-stat-icon" />
@@ -181,20 +109,20 @@ export const TaskCard = ({ task, className, onDelete }: TaskCardProps) => {
                 {task.energy_required}/10
               </div>
             </div>
+          </div>
 
-            {/* 難易度 */}
-            <div className="task-stat">
-              <Shield className="task-stat-icon" />
-              <span>難易度</span>
-              <div className="task-stat-value difficulty-value px-2 py-1 rounded text-xs font-bold ml-auto">
-                {difficultyLevel.text}
-              </div>
+          {/* 難易度 */}
+          <div className="task-stat flex-wrap">
+            <Shield className="task-stat-icon" />
+            <span>難易度</span>
+            <div className="task-stat-value difficulty-value px-2 py-1 rounded text-xs font-bold ml-auto">
+              {difficultyLevel.text}
             </div>
           </div>
 
           {/* 期限 */}
           {task.deadline && (
-            <div className="task-stat flex-wrap">
+            <div className="task-stat flex-wrap !mt-4">
               <Calendar className="task-stat-icon" />
               <span>期限</span>
               <div
@@ -240,7 +168,10 @@ export const TaskCard = ({ task, className, onDelete }: TaskCardProps) => {
         </div>
 
         <button
-          onClick={() => onDelete?.(task.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete?.(task.id);
+          }}
           className="delete-button p-2 rounded-full hover:bg-red-300 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
           title="タスクを削除"
         >

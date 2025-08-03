@@ -45,6 +45,29 @@ RSpec.describe Task, type: :model do
       expect(task).not_to be_valid
       expect(task.errors[:importance]).to include("is not included in the list")
     end
+
+    it "is valid with description up to 200 characters" do
+      description = "a" * 200
+      task = Task.new(title: "Test Task", duration: 60, description: description)
+      expect(task).to be_valid
+    end
+
+    it "is invalid with description over 200 characters" do
+      description = "a" * 201
+      task = Task.new(title: "Test Task", duration: 60, description: description)
+      expect(task).not_to be_valid
+      expect(task.errors[:description]).to include("is too long (maximum is 200 characters)")
+    end
+
+    it "is valid with empty description" do
+      task = Task.new(title: "Test Task", duration: 60, description: "")
+      expect(task).to be_valid
+    end
+
+    it "is valid with nil description" do
+      task = Task.new(title: "Test Task", duration: 60, description: nil)
+      expect(task).to be_valid
+    end
   end
 
   describe "dependencies" do
@@ -54,7 +77,7 @@ RSpec.describe Task, type: :model do
         duration: 60,
         dependencies: [1, 2, 3]
       )
-      
+
       expect(task.dependencies).to eq([1, 2, 3])
       expect(task.dependencies).to be_a(Array)
     end
@@ -68,7 +91,7 @@ RSpec.describe Task, type: :model do
       task = Task.create!(title: "Test Task", duration: 60, dependencies: [])
       task.dependencies = [4, 5]
       task.save!
-      
+
       task.reload
       expect(task.dependencies).to eq([4, 5])
     end

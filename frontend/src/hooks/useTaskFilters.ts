@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Task } from "@/types/task";
 
 type SortOption = "priority" | "deadline" | "duration" | "title" | "created_at";
-type FilterOption = "all" | "todo" | "in_progress" | "done";
+type FilterOption = "all" | "todo" | "in_progress" | "completed" | "cancelled";
 
 interface UseTaskFiltersProps {
   tasks: Task[];
@@ -80,7 +80,8 @@ export const useTaskFilters = ({
     const total = tasks.length;
     const todo = tasks.filter((t) => t.status === "todo").length;
     const inProgress = tasks.filter((t) => t.status === "in_progress").length;
-    const done = tasks.filter((t) => t.status === "done").length;
+    const completed = tasks.filter((t) => t.status === "completed").length;
+    const cancelled = tasks.filter((t) => t.status === "cancelled").length;
     const overdue = tasks.filter(
       (t) => t.deadline && new Date(t.deadline) < new Date()
     ).length;
@@ -99,7 +100,8 @@ export const useTaskFilters = ({
       total,
       todo,
       inProgress,
-      done,
+      completed,
+      cancelled,
       overdue,
       low,
       medium,

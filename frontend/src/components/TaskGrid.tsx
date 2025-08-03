@@ -6,9 +6,17 @@ interface TaskGridProps {
   tasks: Task[];
   searchTerm: string;
   filterBy: string;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (taskId: number) => void;
 }
 
-export const TaskGrid = ({ tasks, searchTerm, filterBy }: TaskGridProps) => {
+export const TaskGrid = ({
+  tasks,
+  searchTerm,
+  filterBy,
+  onEditTask,
+  onDeleteTask,
+}: TaskGridProps) => {
   if (tasks.length === 0) {
     return (
       <div className="empty-task-board">
@@ -35,7 +43,12 @@ export const TaskGrid = ({ tasks, searchTerm, filterBy }: TaskGridProps) => {
     <div className="task-grid-container">
       <div className="task-cards-grid">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={onEditTask}
+            onDelete={onDeleteTask}
+          />
         ))}
       </div>
     </div>

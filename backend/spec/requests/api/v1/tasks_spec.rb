@@ -108,6 +108,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
       {
         task: {
           title: "",
+          description: "a" * 201, # 201文字で文字数制限違反
           duration: -1,
           energy_required: 15
         }
@@ -134,6 +135,111 @@ RSpec.describe "Api::V1::Tasks", type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
         json_response = JSON.parse(response.body)
         expect(json_response["errors"]).to be_present
+      end
+    end
+  end
+
+  describe "PUT /api/v1/tasks/:id" do
+    let!(:task) do
+      Task.create!(
+        title: "Original Task",
+        description: "Original Description",
+        duration: 60,
+        energy_required: 5,
+        importance: 3,
+        urgency: 4,
+        ease: 2,
+        status: "todo",
+        dependencies: []
+      )
+    end
+
+    let(:valid_update_attributes) do
+      {
+        task: {
+          title: "Updated Task",
+          description: "Updated Description",
+          duration: 120,
+          energy_required: 7,
+          importance: 5,
+          urgency: 3,
+          ease: 4,
+          status: "completed",
+          dependencies: [1, 2]
+        }
+      }
+    end
+
+    let(:invalid_update_attributes) do
+      {
+        task: {
+          title: "",
+          description: "a" * 201, # 201文字で文字数制限違反
+          duration: -1,
+          energy_required: 15
+        }
+      }
+    end
+
+    context "when task exists" do
+      context "with valid parameters" do
+        it "updates the task" do
+          put "/api/v1/tasks/#{task.id}", params: valid_update_attributes, as: :json
+
+          expect(response).to have_http_status(:ok)
+          json_response = JSON.parse(response.body)
+          expect(json_response["title"]).to eq("Updated Task")
+          expect(json_response["description"]).to eq("Updated Description")
+          expect(json_response["duration"]).to eq(120)
+          expect(json_response["status"]).to eq("completed")
+          expect(json_response["dependencies"]).to eq([1, 2])
+
+          # データベースでも更新されていることを確認
+          task.reload
+          expect(task.title).to eq("Updated Task")
+          expect(task.status).to eq("completed")
+        end
+
+        it "updates only specified fields" do
+          partial_update = {
+            task: {
+              title: "Partially Updated Task",
+              status: "in_progress"
+            }
+          }
+
+          put "/api/v1/tasks/#{task.id}", params: partial_update, as: :json
+
+          expect(response).to have_http_status(:ok)
+          json_response = JSON.parse(response.body)
+          expect(json_response["title"]).to eq("Partially Updated Task")
+          expect(json_response["status"]).to eq("in_progress")
+          expect(json_response["description"]).to eq("Original Description") # 元の値が保持される
+        end
+      end
+
+      context "with invalid parameters" do
+        it "returns validation errors" do
+          put "/api/v1/tasks/#{task.id}", params: invalid_update_attributes, as: :json
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          json_response = JSON.parse(response.body)
+          expect(json_response["errors"]).to be_present
+
+          # データベースは更新されていないことを確認
+          task.reload
+          expect(task.title).to eq("Original Task")
+        end
+      end
+    end
+
+    context "when task does not exist" do
+      it "returns 404" do
+        put "/api/v1/tasks/999999", params: valid_update_attributes, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        json_response = JSON.parse(response.body)
+        expect(json_response["error"]).to eq("Task not found")
       end
     end
   end

@@ -3,7 +3,8 @@ interface TaskStatsProps {
     total: number;
     todo: number;
     inProgress: number;
-    done: number;
+    completed: number;
+    cancelled: number;
     overdue: number;
     low: number;
     medium: number;
@@ -34,7 +35,11 @@ export const TaskStats = ({ stats }: TaskStatsProps) => {
         </div>
         <div className="stat-card stat-completed">
           <div className="stat-label">完了</div>
-          <div className="stat-number">{stats.done}</div>
+          <div className="stat-number">{stats.completed}</div>
+        </div>
+        <div className="stat-card stat-cancelled">
+          <div className="stat-label">キャンセル</div>
+          <div className="stat-number">{stats.cancelled}</div>
         </div>
         <div className="stat-card stat-overdue">
           <div className="stat-label">期限切れ</div>
@@ -43,7 +48,7 @@ export const TaskStats = ({ stats }: TaskStatsProps) => {
         <div className="stat-card stat-completion">
           <div className="stat-label">完了率</div>
           <div className="stat-number">
-            {Math.round((stats.done / stats.total) * 100) || 0}%
+            {Math.round((stats.completed / stats.total) * 100) || 0}%
           </div>
         </div>
       </div>
