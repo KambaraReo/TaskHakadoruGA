@@ -158,11 +158,11 @@ export const TaskForm = ({
             )}
             disabled={isLoading}
           >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
+            <option value={1}>1 (とても低い)</option>
+            <option value={2}>2 (低い)</option>
+            <option value={3}>3 (普通)</option>
+            <option value={4}>4 (高い)</option>
+            <option value={5}>5 (とても高い)</option>
           </select>
         </FormField>
 
@@ -182,11 +182,11 @@ export const TaskForm = ({
             className={cn("form-select", errors.urgency && "form-input-error")}
             disabled={isLoading}
           >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
+            <option value={1}>1 (とても低い)</option>
+            <option value={2}>2 (低い)</option>
+            <option value={3}>3 (普通)</option>
+            <option value={4}>4 (高い)</option>
+            <option value={5}>5 (とても高い)</option>
           </select>
         </FormField>
       </FormRow>
@@ -232,11 +232,16 @@ export const TaskForm = ({
             )}
             disabled={isLoading}
           >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
+            <option value={1}>1 (とても少ない)</option>
+            <option value={2}>2 (少ない)</option>
+            <option value={3}>3 (やや少ない)</option>
+            <option value={4}>4 (普通)</option>
+            <option value={5}>5 (やや多い)</option>
+            <option value={6}>6 (多い)</option>
+            <option value={7}>7 (かなり多い)</option>
+            <option value={8}>8 (とても多い)</option>
+            <option value={9}>9 (非常に多い)</option>
+            <option value={10}>10 (最大)</option>
           </select>
         </FormField>
       </FormRow>
@@ -244,7 +249,7 @@ export const TaskForm = ({
       {/* 難易度・ステータス */}
       <FormRow>
         <FormField
-          label="難易度"
+          label="難易度（取り組みやすさ）"
           htmlFor="ease"
           required
           error={errors.ease}
