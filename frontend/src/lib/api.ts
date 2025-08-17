@@ -31,7 +31,17 @@ async function fetchApi<T>(
       );
     }
 
-    return await response.json();
+    const contentLength = response.headers.get("content-length");
+    if (response.status === 204 || contentLength === "0") {
+      return null as T;
+    }
+
+    const text = await response.text();
+    if (!text) {
+      return null as T;
+    }
+
+    return JSON.parse(text);
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
