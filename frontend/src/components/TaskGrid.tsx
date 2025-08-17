@@ -8,6 +8,9 @@ interface TaskGridProps {
   filterBy: string;
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: number) => void;
+  selectionMode?: boolean;
+  selectedTaskIds?: number[];
+  onToggleSelection?: (taskId: number) => void;
 }
 
 export const TaskGrid = ({
@@ -16,6 +19,9 @@ export const TaskGrid = ({
   filterBy,
   onEditTask,
   onDeleteTask,
+  selectionMode = false,
+  selectedTaskIds = [],
+  onToggleSelection,
 }: TaskGridProps) => {
   if (tasks.length === 0) {
     return (
@@ -48,6 +54,9 @@ export const TaskGrid = ({
             task={task}
             onEdit={onEditTask}
             onDelete={onDeleteTask}
+            selectionMode={selectionMode}
+            isSelected={selectedTaskIds.includes(task.id)}
+            onToggleSelection={onToggleSelection}
           />
         ))}
       </div>

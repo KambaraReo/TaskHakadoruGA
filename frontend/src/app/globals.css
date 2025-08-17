@@ -149,9 +149,9 @@ body {
 }
 
 /* タスク統計ボード */
-.task-stats-board {
-  background:
-    /* 明るい羊皮紙風テクスチャ */ repeating-linear-gradient(
+.task-stats-board,
+.task-opt-board {
+  background: repeating-linear-gradient(
       90deg,
       rgba(205, 133, 63, 0.05) 0px,
       rgba(205, 133, 63, 0.05) 1px,
@@ -165,18 +165,24 @@ body {
       transparent 1px,
       transparent 15px
     ),
-    /* 温かい光の効果 */
-      radial-gradient(
-        circle at 30% 30%,
-        rgba(212, 175, 55, 0.06) 0%,
-        transparent 50%
-      ),
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(212, 175, 55, 0.06) 0%,
+      transparent 50%
+    ),
     /* ベース色 */ var(--muted);
   border: 2px solid var(--border);
   border-radius: 15px;
-  padding: 2rem;
   box-shadow: 0 8px 25px var(--shadow), inset 0 2px 0 rgba(255, 215, 0, 0.08),
     inset 0 -1px 0 rgba(139, 69, 19, 0.05);
+}
+
+.task-stats-board {
+  padding: 2rem;
+}
+
+.task-opt-board {
+  padding: 0.75rem 2rem;
 }
 
 .stats-header {
@@ -1249,13 +1255,13 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   background: var(--primary);
   color: var(--primary-foreground);
   border: 2px solid var(--primary);
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: "Cinzel", "Georgia", serif;
@@ -1293,7 +1299,7 @@ body {
     align-items: stretch;
   }
 
-  .add-task-button {
+  .task-opt-board > div {
     justify-content: center;
   }
 }
