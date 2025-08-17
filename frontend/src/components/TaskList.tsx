@@ -9,6 +9,7 @@ import { TaskSearch } from "./TaskSearch";
 import { TaskControls } from "./TaskControls";
 import { TaskGrid } from "./TaskGrid";
 import { TaskSelectionSummary } from "./TaskSelectionSummary";
+import { OptimizationButton } from "./OptimizationButton";
 import { LoadingState, ErrorState } from "./TaskLoadingStates";
 import { Modal } from "./Modal";
 import { TaskForm, TaskFormData } from "./TaskForm";
@@ -36,7 +37,6 @@ export const TaskList = () => {
   // 選択機能
   const {
     selectedTaskIds,
-    isSelected,
     toggleSelection,
     selectAll,
     clearSelection,
@@ -157,6 +157,14 @@ export const TaskList = () => {
     selectAll(allTaskIds);
   };
 
+  const handleOptimize = () => {
+    if (!canOptimize) return;
+
+    // TODO: 最適化モーダルを開く処理を実装
+    console.log("最適化実行:", selectedTaskIds);
+    toast.success(`${selectedCount}個のタスクの最適化を開始します`);
+  };
+
   // クライアントサイドでマウントされるまで何も表示しない
   if (!mounted) {
     return null;
@@ -224,6 +232,15 @@ export const TaskList = () => {
           isLoading={isSubmitting}
         />
       </Modal>
+
+      {/* 最適化ボタン（選択モード時のみ表示） */}
+      {selectionMode && (
+        <OptimizationButton
+          selectedCount={selectedCount}
+          canOptimize={canOptimize}
+          onOptimize={handleOptimize}
+        />
+      )}
     </div>
   );
 };
