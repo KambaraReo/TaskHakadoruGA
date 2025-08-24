@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
+import { useTaskSelection } from "@/hooks/useTaskSelection";
 import { TaskStats } from "./TaskStats";
 import { TaskSearch } from "./TaskSearch";
 import { TaskControls } from "./TaskControls";
 import { TaskGrid } from "./TaskGrid";
+import { TaskSelectionSummary } from "./TaskSelectionSummary";
+import { OptimizationButton } from "./OptimizationButton";
 import { LoadingState, ErrorState } from "./TaskLoadingStates";
 import { Modal } from "./Modal";
 import { TaskForm, TaskFormData } from "./TaskForm";
@@ -27,6 +30,19 @@ export const TaskList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 選択モード状態
+  const [selectionMode, setSelectionMode] = useState(false);
+
+  // 選択機能
+  const {
+    selectedTaskIds,
+    toggleSelection,
+    selectAll,
+    clearSelection,
+    selectedCount,
+    canOptimize,
+  } = useTaskSelection();
 
   // カスタムフックを使用
   const { tasks, loading, error, mounted, refetch } = useTasks();
@@ -128,6 +144,24 @@ export const TaskList = () => {
     }
   };
 
+  // 選択関連の処理
+  const handleToggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    if (selectionMode) {
+      clearSelection();
+    }
+  };
+
+  const handleSelectAll = () => {
+    const allTaskIds = filteredAndSortedTasks.map((task) => task.id);
+    selectAll(allTaskIds);
+  };
+
+  // 選択されたタスクを取得
+  const selectedTasks = filteredAndSortedTasks.filter((task) =>
+    selectedTaskIds.includes(task.id)
+  );
+
   // クライアントサイドでマウントされるまで何も表示しない
   if (!mounted) {
     return null;
@@ -161,12 +195,25 @@ export const TaskList = () => {
         />
       </div>
 
+      {/* 選択サマリー */}
+      <TaskSelectionSummary
+        selectedCount={selectedCount}
+        totalCount={filteredAndSortedTasks.length}
+        onSelectAll={handleSelectAll}
+        onClearSelection={clearSelection}
+        onToggleSelectionMode={handleToggleSelectionMode}
+        selectionMode={selectionMode}
+      />
+
       <TaskGrid
         tasks={filteredAndSortedTasks}
         searchTerm={searchTerm}
         filterBy={filterBy}
         onEditTask={handleEditTask}
         onDeleteTask={handleDeleteTask}
+        selectionMode={selectionMode}
+        selectedTaskIds={selectedTaskIds}
+        onToggleSelection={toggleSelection}
       />
 
       {/* タスクフォームモーダル */}
@@ -182,6 +229,16 @@ export const TaskList = () => {
           isLoading={isSubmitting}
         />
       </Modal>
+
+      {/* 最適化ボタン（選択モード時のみ表示） */}
+      {selectionMode && (
+        <OptimizationButton
+          selectedTasks={selectedTasks}
+          onClearSelection={clearSelection}
+          exitSelectionMode={() => setSelectionMode(false)}
+          canOptimize={canOptimize}
+        />
+      )}
     </div>
   );
 };

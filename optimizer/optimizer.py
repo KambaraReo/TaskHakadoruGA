@@ -214,7 +214,7 @@ def run_nsga2_optimization(tasks: List[Dict[str, Any]],
   # - crossover: SimulatedBinaryCrossover (SBX) with prob=0.9, eta=15
   # - mutation: PolynomialMutation with prob=1/n_var, eta=20
   # - selection: TournamentSelection with pressure=2
-	algorithm = NSGA2(pop_size=pop_size)
+  algorithm = NSGA2(pop_size=pop_size)
 
   # カスタマイズする場合
   # from pymoo.operators.crossover.sbx import SBX
@@ -222,7 +222,7 @@ def run_nsga2_optimization(tasks: List[Dict[str, Any]],
   # from pymoo.operators.selection.tournament import TournamentSelection
   #
   # algorithm = NSGA2(
-  #  	pop_size=pop_size,
+  #   pop_size=pop_size,
   #   crossover=SBX(prob=0.8, eta=18),
   #   mutation=PM(prob=1.0/problem.n_var, eta=15),
   #   selection=TournamentSelection(pressure=4)

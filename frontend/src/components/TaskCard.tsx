@@ -28,6 +28,9 @@ interface TaskCardProps {
   className?: string;
   onDelete?: (taskId: number) => void;
   onEdit?: (task: Task) => void;
+  isSelected?: boolean;
+  onToggleSelection?: (taskId: number) => void;
+  selectionMode?: boolean;
 }
 
 export const TaskCard = ({
@@ -35,6 +38,9 @@ export const TaskCard = ({
   className,
   onDelete,
   onEdit,
+  isSelected = false,
+  onToggleSelection,
+  selectionMode = false,
 }: TaskCardProps) => {
   // ユーティリティ関数を使用
   const priorityRank = getPriorityRank(task.importance, task.urgency);
@@ -43,26 +49,51 @@ export const TaskCard = ({
   const difficultyLevel = getDifficultyLevel(task.ease);
 
   const handleCardClick = () => {
-    onEdit?.(task);
+    if (selectionMode) {
+      onToggleSelection?.(task.id);
+    } else {
+      onEdit?.(task);
+    }
   };
 
   return (
     <div
-      className={cn(priorityRank.cardClass, className, "cursor-pointer")}
+      className={cn(
+        priorityRank.cardClass,
+        className,
+        "cursor-pointer",
+        selectionMode &&
+          isSelected &&
+          "ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20",
+        selectionMode && "hover:ring-1 hover:ring-blue-300"
+      )}
       onClick={handleCardClick}
     >
       {/* タスクカードヘッダー */}
       <div className="task-card-header">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <h3 className="task-card-title line-clamp-2">
-              #{task.id} {task.title}
-            </h3>
-            {task.description && (
-              <p className="text-sm opacity-75 line-clamp-2 mt-1">
-                {task.description}
-              </p>
+          <div className="flex items-start gap-3 flex-1">
+            {selectionMode && (
+              <div className="flex-shrink-0 mt-1">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => onToggleSelection?.(task.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+              </div>
             )}
+            <div className="flex-1">
+              <h3 className="task-card-title line-clamp-2">
+                #{task.id} {task.title}
+              </h3>
+              {task.description && (
+                <p className="text-sm opacity-75 line-clamp-2 mt-1">
+                  {task.description}
+                </p>
+              )}
+            </div>
           </div>
           <div className={`priority-badge ${priorityRank.color}`}>
             <span>{priorityRank.name}</span>
