@@ -2149,3 +2149,17 @@ body {
 .task-list-preview.scrollable::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
+/* 詳細最適化結果のスタイル */
+.solution-info {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.solution-info p {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}

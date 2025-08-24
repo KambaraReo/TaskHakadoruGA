@@ -108,12 +108,54 @@ export interface OptimizedTask {
   original_task: Task;
 }
 
-export interface OptimizeResponse {
+// 詳細な最適化結果の型定義
+export interface TaskOrder {
+  id: string | number;
+  title: string;
+  position: number;
+}
+
+export interface Solution {
+  solution_id: number;
+  task_order: TaskOrder[];
+  objectives: {
+    priority_score: number;
+    efficiency_score: number;
+    constraint_violation: number;
+    total_score: number;
+  };
+  metrics: {
+    total_duration: number;
+    total_energy: number;
+    avg_importance: number;
+    avg_urgency: number;
+  };
+}
+
+export interface DetailedOptimizeResponse {
+  algorithm: string;
+  parameters: {
+    population_size: number;
+    generations: number;
+    objectives: string[];
+  };
+  solutions: Solution[];
+  total_solutions: number;
+  best_solution: Solution;
+  execution_time_ms: number;
+}
+
+// 通常の最適化結果
+export interface SimpleOptimizeResponse {
   optimized_tasks: OptimizedTask[];
   total_tasks: number;
   algorithm_used: string;
   execution_time_ms: number;
 }
+
+export type OptimizeResponse =
+  | SimpleOptimizeResponse
+  | DetailedOptimizeResponse;
 
 const OPTIMIZER_BASE_URL =
   process.env.NEXT_PUBLIC_OPTIMIZER_URL || "http://localhost:8000";

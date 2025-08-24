@@ -4,7 +4,11 @@ import {
   OptimizationStep,
   OptimizationParams,
 } from "../hooks/useOptimizationModal";
-import { OptimizeResponse } from "../lib/api";
+import {
+  OptimizeResponse,
+  DetailedOptimizeResponse,
+  SimpleOptimizeResponse,
+} from "../lib/api";
 import { Task } from "../types/task";
 
 interface OptimizationModalProps {
@@ -268,6 +272,13 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
     </div>
   );
 
+  // レスポンスの型を判定するヘルパー関数
+  const isDetailedResponse = (
+    response: OptimizeResponse
+  ): response is DetailedOptimizeResponse => {
+    return "solutions" in response;
+  };
+
   const renderResultsStep = () => {
     if (error) {
       return (
@@ -292,6 +303,71 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
       );
     }
 
+    // 詳細な結果の場合
+    if (isDetailedResponse(optimizationResult)) {
+      return (
+        <div className="optimization-step-content">
+          <div className="optimization-success">
+            <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+            <h3 className="text-green-600">最適化が完了しました</h3>
+          </div>
+
+          <div className="optimization-results">
+            <div className="results-summary">
+              <div className="result-item">
+                <span className="label">最適化されたタスク数:</span>
+                <span className="value">
+                  {optimizationResult.best_solution.task_order.length}個
+                </span>
+              </div>
+              <div className="result-item">
+                <span className="label">使用アルゴリズム:</span>
+                <span className="value">{optimizationResult.algorithm}</span>
+              </div>
+              <div className="result-item">
+                <span className="label">処理時間:</span>
+                <span className="value">
+                  {optimizationResult.execution_time_ms.toFixed(1)}ms
+                </span>
+              </div>
+              <div className="result-item">
+                <span className="label">生成された解の数:</span>
+                <span className="value">
+                  {optimizationResult.solutions.length}個
+                </span>
+              </div>
+            </div>
+
+            <div className="optimized-task-list">
+              <h4>最適化されたタスク順序（最良解）</h4>
+              <div className="solution-info">
+                <p>
+                  総合スコア:{" "}
+                  {optimizationResult.best_solution.objectives.total_score.toFixed(
+                    2
+                  )}
+                </p>
+              </div>
+              <div className="task-order-list">
+                {optimizationResult.best_solution.task_order.map(
+                  (taskOrder, index) => (
+                    <div key={taskOrder.id} className="optimized-task-item">
+                      <div className="task-rank">{index + 1}</div>
+                      <div className="task-info">
+                        <div className="task-name">{taskOrder.title}</div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 通常の結果の場合
+    const simpleResult = optimizationResult as SimpleOptimizeResponse;
     return (
       <div className="optimization-step-content">
         <div className="optimization-success">
@@ -303,16 +379,16 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
           <div className="results-summary">
             <div className="result-item">
               <span className="label">最適化されたタスク数:</span>
-              <span className="value">{optimizationResult.total_tasks}個</span>
+              <span className="value">{simpleResult.total_tasks}個</span>
             </div>
             <div className="result-item">
               <span className="label">使用アルゴリズム:</span>
-              <span className="value">{optimizationResult.algorithm_used}</span>
+              <span className="value">{simpleResult.algorithm_used}</span>
             </div>
             <div className="result-item">
               <span className="label">処理時間:</span>
               <span className="value">
-                {optimizationResult.execution_time_ms.toFixed(1)}ms
+                {simpleResult.execution_time_ms.toFixed(1)}ms
               </span>
             </div>
           </div>
@@ -320,7 +396,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
           <div className="optimized-task-list">
             <h4>最適化されたタスク順序</h4>
             <div className="task-order-list">
-              {optimizationResult.optimized_tasks.map((task, index) => (
+              {simpleResult.optimized_tasks.map((task, index) => (
                 <div key={task.id} className="optimized-task-item">
                   <div className="task-rank">{index + 1}</div>
                   <div className="task-info">
