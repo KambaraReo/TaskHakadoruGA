@@ -2078,3 +2078,74 @@ body {
     align-self: flex-start;
   }
 }
+/* 最適化モーダル - 選択されたタスクのプレビュー */
+.selected-tasks-preview {
+  margin: 1rem 0;
+}
+
+.task-count {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.task-list-preview {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.task-list-preview.scrollable {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.task-preview-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.task-preview-item:last-child {
+  border-bottom: none;
+}
+
+.task-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.task-priority {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.task-preview-more {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  border-top: 1px solid var(--border);
+}
+
+/* スクロールバーのスタイリング */
+.task-list-preview.scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-list-preview.scrollable::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: 3px;
+}
+
+.task-list-preview.scrollable::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.task-list-preview.scrollable::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

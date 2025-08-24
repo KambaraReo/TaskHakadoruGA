@@ -64,20 +64,17 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
         <p className="task-count">
           {selectedTasks.length}個のタスクが選択されています。
         </p>
-        <div className="task-list-preview">
-          {selectedTasks.slice(0, 3).map((task) => (
+        <div className="task-list-preview scrollable">
+          {selectedTasks.map((task) => (
             <div key={task.id} className="task-preview-item">
-              <span className="task-title">{task.title}</span>
+              <span className="task-title">
+                #{task.id} {task.title}
+              </span>
               <span className="task-priority">
                 重要度: {task.importance}/5, 緊急度: {task.urgency}/5
               </span>
             </div>
           ))}
-          {selectedTasks.length > 3 && (
-            <div className="task-preview-more">
-              他 {selectedTasks.length - 3} 個のタスク...
-            </div>
-          )}
         </div>
       </div>
     </div>
