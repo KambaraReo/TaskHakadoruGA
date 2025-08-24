@@ -157,13 +157,10 @@ export const TaskList = () => {
     selectAll(allTaskIds);
   };
 
-  const handleOptimize = () => {
-    if (!canOptimize) return;
-
-    // TODO: 最適化モーダルを開く処理を実装
-    console.log("最適化実行:", selectedTaskIds);
-    toast.success(`${selectedCount}個のタスクの最適化を開始します`);
-  };
+  // 選択されたタスクを取得
+  const selectedTasks = filteredAndSortedTasks.filter((task) =>
+    selectedTaskIds.includes(task.id)
+  );
 
   // クライアントサイドでマウントされるまで何も表示しない
   if (!mounted) {
@@ -236,9 +233,8 @@ export const TaskList = () => {
       {/* 最適化ボタン（選択モード時のみ表示） */}
       {selectionMode && (
         <OptimizationButton
-          selectedCount={selectedCount}
+          selectedTasks={selectedTasks}
           canOptimize={canOptimize}
-          onOptimize={handleOptimize}
         />
       )}
     </div>

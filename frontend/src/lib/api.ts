@@ -83,3 +83,54 @@ export const taskApi = {
       method: "DELETE",
     }),
 };
+
+// 最適化API
+export interface OptimizationWeights {
+  importance: number;
+  urgency: number;
+  ease: number;
+  energy: number;
+  time: number;
+}
+
+export interface OptimizeRequest {
+  tasks: Task[];
+  weights?: OptimizationWeights;
+  detailed?: boolean;
+  maxSolutions?: number;
+}
+
+export interface OptimizedTask {
+  id: number;
+  title: string;
+  priority_score: number;
+  rank: number;
+  original_task: Task;
+}
+
+export interface OptimizeResponse {
+  optimized_tasks: OptimizedTask[];
+  total_tasks: number;
+  algorithm_used: string;
+  execution_time_ms: number;
+}
+
+const OPTIMIZER_BASE_URL =
+  process.env.NEXT_PUBLIC_OPTIMIZER_URL || "http://localhost:8000";
+
+export const optimizerApi = {
+  // タスク最適化
+  optimizeTasks: (request: OptimizeRequest): Promise<OptimizeResponse> =>
+    fetch(`${OPTIMIZER_BASE_URL}/optimize`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    }).then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`Optimization failed: ${response.status}`);
+      }
+      return response.json();
+    }),
+};
