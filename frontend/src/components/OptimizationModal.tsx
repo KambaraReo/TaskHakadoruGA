@@ -67,7 +67,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
 
   const renderConfirmationStep = () => (
     <div className="optimization-step-content">
-      <h3>選択されたタスクを最適化しますか？</h3>
+      <h3>選択されたタスクで順序を最適化しますか？</h3>
       <div className="selected-tasks-preview">
         <p className="task-count">
           {selectedTasks.length}個のタスクが選択されています。
@@ -236,32 +236,26 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
               checked={params.detailed}
               onChange={(e) => onParamsUpdate({ detailed: e.target.checked })}
             />
-            <span>詳細な最適化結果を取得する</span>
+            <span>複数の最適化結果を取得する</span>
           </label>
+          {params.detailed && (
+            <div className="form-group">
+              <label>取得する解（タスク順序）の数</label>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                step="1"
+                value={params.maxSolutions}
+                onChange={(e) =>
+                  onParamsUpdate({ maxSolutions: parseInt(e.target.value) })
+                }
+                className="weight-slider"
+              />
+              <span className="weight-value">{params.maxSolutions}個</span>
+            </div>
+          )}
         </div>
-
-        {params.detailed && (
-          <div className="form-group">
-            <label>
-              取得する解の数
-              <p className="weight-description">
-                → 複数の最適化案を比較したい場合に設定
-              </p>
-            </label>
-            <input
-              type="range"
-              min="1"
-              max="10"
-              step="1"
-              value={params.maxSolutions}
-              onChange={(e) =>
-                onParamsUpdate({ maxSolutions: parseInt(e.target.value) })
-              }
-              className="weight-slider"
-            />
-            <span className="weight-value">{params.maxSolutions}個</span>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -319,7 +313,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
           <div className="optimization-results">
             <div className="results-summary">
               <div className="result-item">
-                <span className="label">最適化されたタスク数:</span>
+                <span className="label">選択されたタスク数:</span>
                 <span className="value">
                   {optimizationResult.best_solution.task_order.length}個
                 </span>
@@ -335,15 +329,17 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
                 </span>
               </div>
               <div className="result-item">
-                <span className="label">生成された解の数:</span>
+                {/* <span className="label">生成された解の数:</span> */}
+                <span className="label">提案するタスク順序（解）の数:</span>
                 <span className="value">
-                  {optimizationResult.solutions.length}個
+                  {/* {optimizationResult.solutions.length}個 */}
+                  {params.maxSolutions}個
                 </span>
               </div>
             </div>
 
             <div className="optimized-task-list">
-              <h4>最適化されたタスク順序（最良解）</h4>
+              <h4>タスク順序の提案（最良解）</h4>
               <div className="solution-info">
                 <p>
                   総合スコア:{" "}
@@ -382,7 +378,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
         <div className="optimization-results">
           <div className="results-summary">
             <div className="result-item">
-              <span className="label">最適化されたタスク数:</span>
+              <span className="label">選択されたタスク数:</span>
               <span className="value">{simpleResult.total_tasks}個</span>
             </div>
             <div className="result-item">
@@ -398,7 +394,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
           </div>
 
           <div className="optimized-task-list">
-            <h4>最適化されたタスク順序</h4>
+            <h4>タスク順序の提案</h4>
             <div className="task-order-list">
               {simpleResult.optimized_tasks.map((task, index) => (
                 <div key={task.id} className="optimized-task-item">
@@ -467,7 +463,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
                 onStartOptimization();
               }}
             >
-              最適化開始
+              最適化を実行
             </button>
           </div>
         );
@@ -497,7 +493,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
     <div className="modal-overlay" onClick={onClose}>
       <div className="optimization-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>タスク最適化</h2>
+          <h2>タスク順序の最適化</h2>
           <button
             onClick={onClose}
             className="modal-close-button"
