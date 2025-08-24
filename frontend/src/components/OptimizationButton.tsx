@@ -10,11 +10,15 @@ import toast from "react-hot-toast";
 
 interface OptimizationButtonProps {
   selectedTasks: Task[];
+  onClearSelection: () => void;
+  exitSelectionMode: () => void;
   canOptimize: boolean;
 }
 
 export const OptimizationButton = ({
   selectedTasks,
+  onClearSelection,
+  exitSelectionMode,
   canOptimize,
 }: OptimizationButtonProps) => {
   const {
@@ -94,6 +98,8 @@ export const OptimizationButton = ({
         isOpen={isOpen}
         currentStep={currentStep}
         selectedTasks={selectedTasks}
+        onClearSelection={onClearSelection}
+        exitSelectionMode={exitSelectionMode}
         params={params}
         optimizationResult={optimizationResult}
         error={error}

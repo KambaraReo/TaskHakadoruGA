@@ -234,6 +234,8 @@ export const TaskList = () => {
       {selectionMode && (
         <OptimizationButton
           selectedTasks={selectedTasks}
+          onClearSelection={clearSelection}
+          exitSelectionMode={() => setSelectionMode(false)}
           canOptimize={canOptimize}
         />
       )}

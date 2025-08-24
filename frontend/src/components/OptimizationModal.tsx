@@ -15,6 +15,8 @@ interface OptimizationModalProps {
   isOpen: boolean;
   currentStep: OptimizationStep;
   selectedTasks: Task[];
+  onClearSelection: () => void;
+  exitSelectionMode: () => void;
   params: OptimizationParams;
   optimizationResult: OptimizeResponse | null;
   error: string | null;
@@ -29,6 +31,8 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
   isOpen,
   currentStep,
   selectedTasks,
+  onClearSelection,
+  exitSelectionMode,
   params,
   optimizationResult,
   error,
@@ -472,8 +476,15 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
       case "results":
         return (
           <div className="modal-buttons">
-            <button className="btn-primary" onClick={onClose}>
-              完了
+            <button
+              className="btn-primary"
+              onClick={() => {
+                onClearSelection();
+                exitSelectionMode();
+                onClose();
+              }}
+            >
+              閉じる
             </button>
           </div>
         );
