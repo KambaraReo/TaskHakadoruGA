@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckSquare, Square, X, Target } from "lucide-react";
+import { CheckSquare, Square, X, MousePointerClick } from "lucide-react";
 
 interface TaskSelectionSummaryProps {
   selectedCount: number;
@@ -43,13 +43,13 @@ export const TaskSelectionSummary = ({
                 : "var(--muted-foreground)",
             }}
           >
-            <Target
+            <MousePointerClick
               className="w-4 h-4 inline mr-2"
               style={{ color: "var(--primary)" }}
             />
             {selectionMode
               ? `${selectedCount}個のタスクを選択中 / 全${totalCount}個`
-              : "タスクを選択すると取り組む順序の最適化を提案できます"}
+              : "タスクを複数選択すると、タスク着手順序を提案できます"}
           </div>
 
           {selectionMode && (

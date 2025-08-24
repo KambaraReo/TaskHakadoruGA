@@ -332,7 +332,6 @@ body {
 
 /* ===== コントロール ===== */
 .task-controls {
-  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
