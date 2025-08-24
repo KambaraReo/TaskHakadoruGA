@@ -1571,6 +1571,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 .task-preview-item {
@@ -1972,7 +1973,10 @@ body {
   flex-direction: column;
   gap: 0.75rem;
   max-height: 300px;
+  padding: 1rem 0;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .optimized-task-item {
@@ -1984,11 +1988,6 @@ body {
   border: 1px solid #d2b48c;
   border-radius: 8px;
   transition: all 0.2s ease;
-}
-
-.optimized-task-item:hover {
-  background: #f5deb3;
-  transform: translateX(4px);
 }
 
 .task-rank {
@@ -2089,15 +2088,11 @@ body {
   margin-bottom: 1rem;
 }
 
-.task-list-preview {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--background-secondary);
-}
-
 .task-list-preview.scrollable {
   max-height: 300px;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .task-preview-item {
