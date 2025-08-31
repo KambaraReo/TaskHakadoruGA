@@ -1,4 +1,7 @@
 class Task < ApplicationRecord
+  # 関連付け
+  belongs_to :user
+
   def dependencies
     JSON.parse(self[:dependencies] || '[]')
   end
@@ -16,6 +19,9 @@ class Task < ApplicationRecord
   validates :importance, inclusion: { in: 1..5 }
   validates :urgency, inclusion: { in: 1..5 }
   validates :ease, inclusion: { in: 1..5 }
+
+  # ユーザー別のスコープ
+  scope :for_user, ->(user) { where(user: user) }
 
   # デフォルト値の設定
   after_initialize :set_defaults

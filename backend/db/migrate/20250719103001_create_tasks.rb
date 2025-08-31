@@ -11,6 +11,7 @@ class CreateTasks < ActiveRecord::Migration[8.0]
       t.integer :ease, default: 3                     # 1〜5 (実装の容易さ)
       t.string :status, default: 'todo'              # enum的に使う
       t.text :dependencies                            # JSON配列で依存関係
+      t.references :user, null: true, foreign_key: true  # ユーザー関連付け
 
       t.timestamps
     end
