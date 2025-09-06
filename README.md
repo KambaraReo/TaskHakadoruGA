@@ -10,9 +10,9 @@
 - [技術スタック](#技術スタック)
 - [ディレクトリ構成](#ディレクトリ構成)
 - [データベース・テーブル構成](#データベーステーブル構成)
-- [NSGA-II 技術説明](#nsga-ii技術説明)
+- [NSGA-II 技術説明](#nsga-ii-技術説明)
 - [開発環境における起動手順](#開発環境における起動手順)
-- [API 仕様](#api仕様)
+- [API 仕様](#api-仕様)
 - [開発・テスト](#開発テスト)
 
 ## システムの概要
@@ -61,7 +61,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 ## アーキテクチャ
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │    Backend      │    │   Optimizer     │
 │   (Next.js)     │◄──►│    (Rails)      │◄──►│   (FastAPI)     │
@@ -120,7 +120,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 ## ディレクトリ構成
 
-```
+```text
 TaskHakadoruGA/
 ├── backend/                 # Rails API サーバー
 │   ├── app/
@@ -482,9 +482,9 @@ bundle exec rails db:seed
 
 ### 5. アプリケーションへのアクセス
 
-- **フロントエンド**: http://localhost:3001
-- **Rails API**: http://localhost:3000
-- **FastAPI 最適化エンジン**: http://localhost:8000
+- **フロントエンド**: <http://localhost:3001>
+- **Rails API**: <http://localhost:3000>
+- **FastAPI 最適化エンジン**: <http://localhost:8000>
 - **MySQL**: localhost:3306
 
 ### 6. 開発用コマンド
