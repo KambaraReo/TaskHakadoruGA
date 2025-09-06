@@ -1,11 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Tasks", type: :request do
+  let(:user) { authenticated_user }
+  let(:headers) { auth_headers(user) }
+
   describe "GET /api/v1/tasks" do
     context "when tasks exist" do
       let!(:tasks) do
         [
-          Task.create!(
+          create(:task,
             title: "Task 1",
             description: "Description 1",
             duration: 60,
@@ -13,9 +16,10 @@ RSpec.describe "Api::V1::Tasks", type: :request do
             importance: 3,
             urgency: 4,
             ease: 2,
-            dependencies: []
+            dependencies: [],
+            user: user
           ),
-          Task.create!(
+          create(:task,
             title: "Task 2",
             description: "Description 2",
             duration: 120,
@@ -23,13 +27,14 @@ RSpec.describe "Api::V1::Tasks", type: :request do
             importance: 5,
             urgency: 2,
             ease: 4,
-            dependencies: [1]
+            dependencies: [1],
+            user: user
           )
         ]
       end
 
       it "returns all tasks" do
-        get "/api/v1/tasks"
+        get "/api/v1/tasks", headers: headers
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include("application/json")
@@ -43,7 +48,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
     context "when no tasks exist" do
       it "returns empty array" do
-        get "/api/v1/tasks"
+        get "/api/v1/tasks", headers: headers
 
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
@@ -54,7 +59,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
   describe "GET /api/v1/tasks/:id" do
     let!(:task) do
-      Task.create!(
+      create(:task,
         title: "Test Task",
         description: "Test Description",
         duration: 90,
@@ -62,13 +67,14 @@ RSpec.describe "Api::V1::Tasks", type: :request do
         importance: 4,
         urgency: 3,
         ease: 3,
-        dependencies: []
+        dependencies: [],
+        user: user
       )
     end
 
     context "when task exists" do
       it "returns the task" do
-        get "/api/v1/tasks/#{task.id}"
+        get "/api/v1/tasks/#{task.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
@@ -79,11 +85,11 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
     context "when task does not exist" do
       it "returns 404" do
-        get "/api/v1/tasks/999999"
+        get "/api/v1/tasks/999999", headers: headers
 
         expect(response).to have_http_status(:not_found)
         json_response = JSON.parse(response.body)
-        expect(json_response["error"]).to eq("Task not found")
+        expect(json_response["message"]).to include("Couldn't find Task")
       end
     end
   end
@@ -118,7 +124,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
     context "with valid parameters" do
       it "creates a new task" do
         expect {
-          post "/api/v1/tasks", params: valid_attributes, as: :json
+          post "/api/v1/tasks", params: valid_attributes, headers: headers, as: :json
         }.to change(Task, :count).by(1)
 
         expect(response).to have_http_status(:created)
@@ -130,7 +136,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
     context "with invalid parameters" do
       it "returns validation errors" do
-        post "/api/v1/tasks", params: invalid_attributes, as: :json
+        post "/api/v1/tasks", params: invalid_attributes, headers: headers, as: :json
 
         expect(response).to have_http_status(:unprocessable_entity)
         json_response = JSON.parse(response.body)
@@ -141,7 +147,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
   describe "PUT /api/v1/tasks/:id" do
     let!(:task) do
-      Task.create!(
+      create(:task,
         title: "Original Task",
         description: "Original Description",
         duration: 60,
@@ -150,7 +156,8 @@ RSpec.describe "Api::V1::Tasks", type: :request do
         urgency: 4,
         ease: 2,
         status: "todo",
-        dependencies: []
+        dependencies: [],
+        user: user
       )
     end
 
@@ -184,7 +191,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
     context "when task exists" do
       context "with valid parameters" do
         it "updates the task" do
-          put "/api/v1/tasks/#{task.id}", params: valid_update_attributes, as: :json
+          put "/api/v1/tasks/#{task.id}", params: valid_update_attributes, headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
           json_response = JSON.parse(response.body)
@@ -208,7 +215,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
             }
           }
 
-          put "/api/v1/tasks/#{task.id}", params: partial_update, as: :json
+          put "/api/v1/tasks/#{task.id}", params: partial_update, headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
           json_response = JSON.parse(response.body)
@@ -220,7 +227,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
       context "with invalid parameters" do
         it "returns validation errors" do
-          put "/api/v1/tasks/#{task.id}", params: invalid_update_attributes, as: :json
+          put "/api/v1/tasks/#{task.id}", params: invalid_update_attributes, headers: headers, as: :json
 
           expect(response).to have_http_status(:unprocessable_entity)
           json_response = JSON.parse(response.body)
@@ -235,29 +242,30 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
     context "when task does not exist" do
       it "returns 404" do
-        put "/api/v1/tasks/999999", params: valid_update_attributes, as: :json
+        put "/api/v1/tasks/999999", params: valid_update_attributes, headers: headers, as: :json
 
         expect(response).to have_http_status(:not_found)
         json_response = JSON.parse(response.body)
-        expect(json_response["error"]).to eq("Task not found")
+        expect(json_response["message"]).to include("Couldn't find Task")
       end
     end
   end
 
   describe "DELETE /api/v1/tasks/:id" do
     let!(:task) do
-      Task.create!(
+      create(:task,
         title: "Task to Delete",
         description: "Description",
         duration: 60,
-        dependencies: []
+        dependencies: [],
+        user: user
       )
     end
 
     context "when task exists" do
       it "deletes the task" do
         expect {
-          delete "/api/v1/tasks/#{task.id}"
+          delete "/api/v1/tasks/#{task.id}", headers: headers
         }.to change(Task, :count).by(-1)
 
         expect(response).to have_http_status(:no_content)
@@ -266,11 +274,11 @@ RSpec.describe "Api::V1::Tasks", type: :request do
 
     context "when task does not exist" do
       it "returns 404" do
-        delete "/api/v1/tasks/999999"
+        delete "/api/v1/tasks/999999", headers: headers
 
         expect(response).to have_http_status(:not_found)
         json_response = JSON.parse(response.body)
-        expect(json_response["error"]).to eq("Task not found")
+        expect(json_response["message"]).to include("Couldn't find Task")
       end
     end
   end
