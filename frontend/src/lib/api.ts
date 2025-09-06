@@ -58,10 +58,25 @@ async function fetchApi<T>(
     });
 
     if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        `HTTP error! status: ${response.status}`
-      );
+      // エラーレスポンスの内容を取得
+      const errorText = await response.text();
+      let errorMessage = `HTTP error! status: ${response.status}`;
+
+      try {
+        const errorData = JSON.parse(errorText);
+        // バックエンドからのバリデーションエラーを処理
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          errorMessage = errorData.errors[0]; // 最初のエラーメッセージを使用
+        } else if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // JSONパースに失敗した場合はデフォルトメッセージを使用
+      }
+
+      throw new ApiError(response.status, errorMessage);
     }
 
     const contentLength = response.headers.get("content-length");
