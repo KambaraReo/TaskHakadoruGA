@@ -110,10 +110,24 @@ export const useAuthValidation = () => {
     setErrors({});
   };
 
+  const setFieldError = (field: keyof ValidationErrors, message: string) => {
+    setErrors((prev) => ({ ...prev, [field]: message }));
+  };
+
+  const clearFieldError = (field: keyof ValidationErrors) => {
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[field];
+      return newErrors;
+    });
+  };
+
   return {
     errors,
     validateLoginForm,
     validateRegisterForm,
     clearErrors,
+    setFieldError,
+    clearFieldError,
   };
 };
