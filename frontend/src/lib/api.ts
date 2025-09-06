@@ -1,6 +1,37 @@
 import { Task } from "@/types/task";
+import {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  MeResponse,
+  User,
+} from "@/types/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+// トークン管理
+let authToken: string | null = null;
+
+export const setAuthToken = (token: string | null) => {
+  authToken = token;
+  if (typeof window !== "undefined") {
+    if (token) {
+      localStorage.setItem("auth_token", token);
+    } else {
+      localStorage.removeItem("auth_token");
+    }
+  }
+};
+
+export const getAuthToken = (): string | null => {
+  if (authToken) return authToken;
+
+  if (typeof window !== "undefined") {
+    authToken = localStorage.getItem("auth_token");
+  }
+
+  return authToken;
+};
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -14,11 +45,13 @@ async function fetchApi<T>(
   options?: RequestInit
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
+  const token = getAuthToken();
 
   try {
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options?.headers,
       },
       ...options,
@@ -53,6 +86,27 @@ async function fetchApi<T>(
     );
   }
 }
+
+// 認証API
+export const authApi = {
+  // ログイン
+  login: (credentials: LoginRequest): Promise<AuthResponse> =>
+    fetchApi<AuthResponse>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    }),
+
+  // 登録
+  register: (userData: RegisterRequest): Promise<AuthResponse> =>
+    fetchApi<AuthResponse>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(userData),
+    }),
+
+  // 現在のユーザー情報取得
+  me: (): Promise<User> =>
+    fetchApi<MeResponse>("/auth/me").then((response) => response.user),
+};
 
 export const taskApi = {
   // タスク一覧取得
