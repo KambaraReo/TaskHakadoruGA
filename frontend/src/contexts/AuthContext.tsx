@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { AuthState, LoginRequest, RegisterRequest } from "@/types/auth";
 import { authApi, setAuthToken, getAuthToken } from "@/lib/api";
+import toast from "react-hot-toast";
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
@@ -77,6 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isAuthenticated: false,
       isLoading: false,
     });
+    toast.success("ログアウトしました");
   };
 
   const checkAuth = async () => {
