@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Task, type: :model do
+  let(:user) { create(:user) }
+
   describe "validations" do
     it "is valid with valid attributes" do
       task = Task.new(
@@ -11,61 +13,62 @@ RSpec.describe Task, type: :model do
         importance: 3,
         urgency: 4,
         ease: 2,
-        dependencies: []
+        dependencies: [],
+        user: user
       )
       expect(task).to be_valid
     end
 
     it "is invalid without a title" do
-      task = Task.new(duration: 60)
+      task = Task.new(duration: 60, user: user)
       expect(task).not_to be_valid
       expect(task.errors[:title]).to include("can't be blank")
     end
 
     it "is invalid without duration" do
-      task = Task.new(title: "Test Task")
+      task = Task.new(title: "Test Task", user: user)
       expect(task).not_to be_valid
       expect(task.errors[:duration]).to include("can't be blank")
     end
 
     it "is invalid with negative duration" do
-      task = Task.new(title: "Test Task", duration: -1)
+      task = Task.new(title: "Test Task", duration: -1, user: user)
       expect(task).not_to be_valid
       expect(task.errors[:duration]).to include("must be greater than 0")
     end
 
     it "is invalid with energy_required out of range" do
-      task = Task.new(title: "Test Task", duration: 60, energy_required: 15)
+      task = Task.new(title: "Test Task", duration: 60, energy_required: 15, user: user)
       expect(task).not_to be_valid
       expect(task.errors[:energy_required]).to include("is not included in the list")
     end
 
     it "is invalid with importance out of range" do
-      task = Task.new(title: "Test Task", duration: 60, importance: 6)
+      task = Task.new(title: "Test Task", duration: 60, importance: 6, user: user)
       expect(task).not_to be_valid
       expect(task.errors[:importance]).to include("is not included in the list")
     end
 
     it "is valid with description up to 200 characters" do
       description = "a" * 200
-      task = Task.new(title: "Test Task", duration: 60, description: description)
+      task = Task.new(title: "Test Task", duration: 60, description: description, user: user)
       expect(task).to be_valid
     end
 
     it "is invalid with description over 200 characters" do
       description = "a" * 201
-      task = Task.new(title: "Test Task", duration: 60, description: description)
+      task = Task.new(title: "Test Task", duration: 60, description: description, user: user)
       expect(task).not_to be_valid
       expect(task.errors[:description]).to include("is too long (maximum is 200 characters)")
     end
 
     it "is valid with empty description" do
-      task = Task.new(title: "Test Task", duration: 60, description: "")
+      task = Task.new(title: "Test Task", duration: 60, description: "", user: user)
       expect(task).to be_valid
     end
 
     it "is valid with nil description" do
-      task = Task.new(title: "Test Task", duration: 60, description: nil)
+      task = Task.new(title: "Test Task", duration: 60, description: nil, user: user)
       expect(task).to be_valid
     end
   end
@@ -75,7 +78,8 @@ RSpec.describe Task, type: :model do
       task = Task.create!(
         title: "Test Task",
         duration: 60,
-        dependencies: [1, 2, 3]
+        dependencies: [1, 2, 3],
+        user: user
       )
 
       expect(task.dependencies).to eq([1, 2, 3])
@@ -83,12 +87,12 @@ RSpec.describe Task, type: :model do
     end
 
     it "initializes with empty dependencies array" do
-      task = Task.new(title: "Test Task", duration: 60)
+      task = Task.new(title: "Test Task", duration: 60, user: user)
       expect(task.dependencies).to eq([])
     end
 
     it "can update dependencies" do
-      task = Task.create!(title: "Test Task", duration: 60, dependencies: [])
+      task = Task.create!(title: "Test Task", duration: 60, dependencies: [], user: user)
       task.dependencies = [4, 5]
       task.save!
 
@@ -98,7 +102,7 @@ RSpec.describe Task, type: :model do
   end
 
   describe "status enum" do
-    let(:task) { Task.create!(title: "Test Task", duration: 60) }
+    let(:task) { Task.create!(title: "Test Task", duration: 60, user: user) }
 
     it "defaults to todo status" do
       expect(task.status).to eq('todo')
@@ -117,7 +121,7 @@ RSpec.describe Task, type: :model do
   end
 
   describe "default values" do
-    let(:task) { Task.create!(title: "Test Task", duration: 60) }
+    let(:task) { Task.create!(title: "Test Task", duration: 60, user: user) }
 
     it "sets default values correctly" do
       expect(task.energy_required).to eq(5)
