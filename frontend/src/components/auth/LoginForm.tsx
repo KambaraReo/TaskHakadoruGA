@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthValidation } from "@/hooks/useAuthValidation";
 import { LoginRequest } from "@/types/auth";
+import toast from "react-hot-toast";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
@@ -17,11 +18,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     clearErrors();
 
     if (!validateLoginForm(formData)) {
@@ -32,10 +31,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
 
     try {
       await login(formData);
+      toast.success("ログインしました");
     } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "ログインに失敗しました"
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "ログインに失敗しました";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -53,19 +53,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   return (
     <div className="content-board">
       <div className="board-content">
-        {error && (
-          <div
-            className="px-4 py-3 rounded mb-4 border"
-            style={{
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              borderColor: "var(--priority-urgent)",
-              color: "var(--priority-urgent)",
-            }}
-          >
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="task-form">
           <div className="form-group">
             <label htmlFor="email" className="form-label">
