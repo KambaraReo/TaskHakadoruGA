@@ -19,6 +19,6 @@ class AuthenticateUser
     return user if user && user.authenticate(password)
 
     # raise Authentication error if credentials are invalid
-    raise StandardError, 'Invalid credentials'
+    raise StandardError, 'メールアドレスまたはパスワードが正しくありません'
   end
 end
