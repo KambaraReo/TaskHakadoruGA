@@ -46,6 +46,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated: true,
         isLoading: false,
       });
+
+      // 認証成功時にAuthPageの状態をクリア
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("authMode");
+      }
     } catch (error) {
       setState((prev) => ({ ...prev, isLoading: false }));
       throw error;
@@ -64,6 +69,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated: true,
         isLoading: false,
       });
+
+      // 認証成功時にAuthPageの状態をクリア
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("authMode");
+      }
     } catch (error) {
       setState((prev) => ({ ...prev, isLoading: false }));
       throw error;

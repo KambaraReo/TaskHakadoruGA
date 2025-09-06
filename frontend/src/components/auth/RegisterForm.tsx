@@ -14,13 +14,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   onSwitchToLogin,
 }) => {
   const { register } = useAuth();
-  const {
-    errors,
-    validateRegisterForm,
-    clearErrors,
-    setFieldError,
-    clearFieldError,
-  } = useAuthValidation();
+  const { errors, validateRegisterForm, clearErrors, clearFieldError } =
+    useAuthValidation();
   const [formData, setFormData] = useState<RegisterRequest>({
     name: "",
     email: "",
@@ -51,13 +46,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       const errorMessage =
         error instanceof Error ? error.message : "登録に失敗しました";
 
-      // メールアドレス重複エラーの場合はフィールドエラーとして表示
-      if (errorMessage.includes("このメールアドレスは既に使用されています")) {
-        setFieldError("email", errorMessage);
-      } else {
-        // その他のエラーはトースト通知
-        toast.error(errorMessage);
-      }
+      // すべてのエラーをトースト通知で表示
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

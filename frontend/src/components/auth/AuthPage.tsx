@@ -9,7 +9,20 @@ type AuthMode = "login" | "register";
 import { Header } from "@/components/Header";
 
 export const AuthPage: React.FC = () => {
-  const [mode, setMode] = useState<AuthMode>("login");
+  const [mode, setMode] = useState<AuthMode>(() => {
+    if (typeof window !== "undefined") {
+      const savedMode = localStorage.getItem("authMode") as AuthMode;
+      return savedMode || "login";
+    }
+    return "login";
+  });
+
+  const handleModeChange = (newMode: AuthMode) => {
+    setMode(newMode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("authMode", newMode);
+    }
+  };
 
   return (
     <div className="min-h-screen app-container">
@@ -18,9 +31,11 @@ export const AuthPage: React.FC = () => {
         <div className="flex items-center justify-center py-12">
           <div className="w-full max-w-md">
             {mode === "login" ? (
-              <LoginForm onSwitchToRegister={() => setMode("register")} />
+              <LoginForm
+                onSwitchToRegister={() => handleModeChange("register")}
+              />
             ) : (
-              <RegisterForm onSwitchToLogin={() => setMode("login")} />
+              <RegisterForm onSwitchToLogin={() => handleModeChange("login")} />
             )}
           </div>
         </div>
