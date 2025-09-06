@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthValidation } from "@/hooks/useAuthValidation";
 import { RegisterRequest } from "@/types/auth";
+import toast from "react-hot-toast";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -13,7 +14,13 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   onSwitchToLogin,
 }) => {
   const { register } = useAuth();
-  const { errors, validateRegisterForm, clearErrors } = useAuthValidation();
+  const {
+    errors,
+    validateRegisterForm,
+    clearErrors,
+    setFieldError,
+    clearFieldError,
+  } = useAuthValidation();
   const [formData, setFormData] = useState<RegisterRequest>({
     name: "",
     email: "",
@@ -21,11 +28,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   });
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     clearErrors();
 
     const formDataWithConfirmation = {
@@ -41,8 +46,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
     try {
       await register(formData);
+      toast.success("アカウントが正常に作成されました");
     } catch (error) {
-      setError(error instanceof Error ? error.message : "登録に失敗しました");
+      const errorMessage =
+        error instanceof Error ? error.message : "登録に失敗しました";
+
+      // メールアドレス重複エラーの場合はフィールドエラーとして表示
+      if (errorMessage.includes("このメールアドレスは既に使用されています")) {
+        setFieldError("email", errorMessage);
+      } else {
+        // その他のエラーはトースト通知
+        toast.error(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -55,28 +70,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-    // リアルタイムでエラーをクリア
+    // リアルタイムでエラーをクリア（該当フィールドのエラーのみ）
     if (errors[name as keyof typeof errors]) {
-      clearErrors();
+      clearFieldError(name as keyof typeof errors);
     }
   };
 
   return (
     <div className="content-board">
       <div className="board-content">
-        {error && (
-          <div
-            className="px-4 py-3 rounded mb-4 border"
-            style={{
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              borderColor: "var(--priority-urgent)",
-              color: "var(--priority-urgent)",
-            }}
-          >
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="task-form">
           <div className="form-group">
             <label htmlFor="name" className="form-label required">
