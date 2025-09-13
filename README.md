@@ -5,27 +5,63 @@
 ## 目次
 
 - [システムの概要](#システムの概要)
+- [画面例](#画面例)
 - [機能説明](#機能説明)
 - [アーキテクチャ](#アーキテクチャ)
 - [技術スタック](#技術スタック)
 - [ディレクトリ構成](#ディレクトリ構成)
 - [データベース・テーブル構成](#データベーステーブル構成)
 - [NSGA-II 技術説明](#nsga-ii-技術説明)
-- [開発環境における起動手順](#開発環境における起動手順)
+- [起動手順（@開発環境）](#dev-start)
 - [API 仕様](#api-仕様)
 - [開発・テスト](#開発テスト)
 
 ## システムの概要
 
-TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用してタスクの最適な実行順序を提案する Web アプリケーションです。ユーザーが登録したタスクの重要度、緊急度、難易度、所要時間、必要エネルギーなどの属性を総合的に評価し、効率的なタスク実行順序を自動生成します。
+TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用してタスクの最適な実行順序を提案する Web アプリケーションです。ユーザーが登録したタスクの重要度、緊急度、難易度、所要時間、必要エネルギーなどの属性を総合的に評価し、効率的なタスク実行順序を提案します。
 
 ### 主な特徴
 
-- **多目的最適化**: 優先度、効率性、制約違反の 3 つの目的関数を同時に最適化
+- **多目的最適化**: 優先度、効率性、制約違反の3つの目的関数を同時に最適化
 - **ユーザー認証**: JWT 認証による安全なユーザー管理
 - **リアルタイム最適化**: FastAPI による高速な最適化処理
 - **直感的 UI**: Next.js + Tailwind CSS によるモダンなユーザーインターフェース
 - **マイクロサービス構成**: Rails、FastAPI、Next.js の分離されたアーキテクチャ
+
+## 画面例
+
+### ログイン・ユーザー登録画面
+
+<div style="display: flex; gap: 4px">
+  <img src="./docs/login.png" alt="TaskHakadoruGA ログイン画面" width="400" />
+  <img src="./docs/register.png" alt="TaskHakadoruGA ユーザー登録画面" width="400" />
+</div>
+
+### 一覧画面
+
+<div style="display: flex; gap: 4px">
+  <img src="./docs/index_1.png" alt="TaskHakadoruGA 一覧画面" width="400" />
+  <img src="./docs/index_2.png" alt="TaskHakadoruGA 一覧画面" width="400" />
+</div>
+
+### タスク追加モーダル画面
+
+<p align="left">
+  <img src="./docs/modal.png" alt="TaskHakadoruGA タスク追加モーダル画面" width="400" />
+</p>
+
+## デモGIF
+
+- 最良解のみ提示
+<p align="left">
+  <img src="./docs/demo_1.gif" alt="TaskHakadoruGA デモGIF画像" width="600" />
+</p>
+
+- 複数解を提示
+※ 追加予定
+<!-- <p align="left">
+  <img src="./docs/demo_2.gif" alt="TaskHakadoruGA デモGIF画像" width="600" />
+</p> -->
 
 ## 機能説明
 
@@ -40,7 +76,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 - **タスク作成**: タイトル、説明、重要度、緊急度、難易度、所要時間、必要エネルギーの設定
 - **タスク編集**: 既存タスクの属性変更
 - **タスク削除**: 不要なタスクの削除
-- **ステータス管理**: todo、進行中、完了、キャンセルの 4 つのステータス
+- **ステータス管理**: todo、進行中、完了、キャンセルの4つのステータス
 - **依存関係設定**: タスク間の依存関係の定義
 - **締切設定**: タスクの締切日時の設定
 
@@ -48,7 +84,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 - **NSGA-II 最適化**: 多目的遺伝的アルゴリズムによる最適化
 - **重み調整**: ユーザーによる目的関数の重み設定
-- **複数解提示**: パレート最適解の上位 10 解を提示
+- **複数解提示**: パレート最適解の上位10解を提示
 - **制約考慮**: 依存関係と締切制約を考慮した最適化
 
 ### UI/UX 機能
@@ -82,7 +118,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 - **Frontend ↔ Backend**: REST API（JWT 認証）
 - **Backend ↔ Optimizer**: HTTP API（JSON 通信）
 - **Backend ↔ Database**: ActiveRecord ORM
-- **All Services ↔ Database**: MySQL 接続
+- **All Services ↔ Database**: MySQL接続
 
 ## 技術スタック
 
@@ -215,7 +251,7 @@ TaskHakadoruGA/
 
 ### 目的関数の詳細設計
 
-本システムでは、以下の 3 つの目的関数を**同時に最適化**します：
+本システムでは、以下の3つの目的関数を**同時に最適化**します：
 
 #### 1. 優先度最大化 (Priority Maximization)
 
@@ -238,7 +274,7 @@ def _calculate_priority_objective(self, ordered_tasks: List[Dict]) -> float:
 **特徴:**
 
 - **重要度・緊急度重視**: ユーザーが設定した重要度と緊急度を重み付けで評価
-- **難易度考慮**: 簡単なタスクを優先的に配置（クイックウィン戦略）
+- **難易度考慮**: 簡単なタスクを優先的に配置（Quick Win戦略）
 - **位置ペナルティ**: 重要なタスクが後回しになることを防ぐ
 
 #### 2. 効率性最大化 (Efficiency Maximization)
@@ -422,9 +458,9 @@ except Exception as e:
 4. **スケーラビリティ**: 小規模から大規模まで対応
 5. **透明性**: 最適化プロセスと結果の完全な可視化
 
-この NSGA-II 実装により、従来の単純な優先度付けでは不可能だった、**複数の相反する目的を同時に考慮した真に最適なタスク順序**を提供します。
+NSGA-II 実装により、単純な優先度付けでは困難な、**複数の相反する目的を同時に考慮した最適なタスク優先順位**を提供します。
 
-## 開発環境における起動手順
+## 起動手順（@開発環境）<a id="dev-start"></a>
 
 ### 前提条件
 
@@ -440,20 +476,28 @@ cd TaskHakadoruGA
 
 ### 2. 環境変数の設定
 
-`.env` ファイルが既に設定されているため、そのまま使用可能です。
-必要に応じて以下の値を変更してください：
+`.env` ファイルで以下の項目を適切に設定します。
 
 ```bash
-# ポート番号の変更（競合する場合）
-RAILS_PORT=3000
-NEXTJS_PORT=3001
-OPTIMIZER_PORT=8000
+# Rails
+RAILS_PORT=
+DATABASE_URL=
 
-# データベース設定
-MYSQL_ROOT_PASSWORD=root
-MYSQL_DB=task_hakadoru_ga_dev
-MYSQL_USER=user
-MYSQL_PASSWORD=password
+# FastAPI
+OPTIMIZER_PORT=
+OPTIMIZER_DB_URL=
+PYTHON_ENV=
+
+# Next.js
+NEXTJS_PORT=
+NEXT_PUBLIC_API_URL=
+NEXT_PUBLIC_OPTIMIZER_URL=
+
+# MySQL
+MYSQL_ROOT_PASSWORD=
+MYSQL_DB=
+MYSQL_USER=
+MYSQL_PASSWORD=
 ```
 
 ### 3. Docker コンテナの起動
@@ -476,16 +520,15 @@ docker-compose exec backend bash
 bundle exec rails db:create
 bundle exec rails db:migrate
 
-# シードデータの投入（オプション）
+# シードデータの投入
 bundle exec rails db:seed
 ```
 
 ### 5. アプリケーションへのアクセス
 
-- **フロントエンド**: <http://localhost:3001>
-- **Rails API**: <http://localhost:3000>
-- **FastAPI 最適化エンジン**: <http://localhost:8000>
-- **MySQL**: localhost:3306
+- **フロントエンド**: localhost:[NEXTJS_PORT]
+- **Rails API**: localhost:[RAILS_PORT]
+- **FastAPI 最適化エンジン**: localhost:[OPTIMIZER_PORT]
 
 ### 6. 開発用コマンド
 
@@ -545,7 +588,7 @@ bundle exec rails db:drop db:create db:migrate
 
 ## 開発・テスト
 
-### バックエンドテスト
+### バックエンドのテスト
 
 ```bash
 docker-compose exec backend bash

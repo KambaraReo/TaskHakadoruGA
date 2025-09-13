@@ -1,11 +1,15 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+# User を作成（全タスク共通で使用）
+user = User.find_or_create_by!(
+    name: "ゲスト",
+    email: "guest@example.com"
+  ) do |u|
+    u.password = "password"
+end
 
-# 既存のタスクを削除（開発環境でのリセット用）
+# 既存の Task を削除（開発環境でのリセット用）
 Task.destroy_all
 
-# サンプルタスクデータを作成
+# タスクデータ定義
 tasks_data = [
   {
     title: "要件定義書作成",
@@ -29,7 +33,7 @@ tasks_data = [
     urgency: 3,
     ease: 2,
     status: 'todo',
-    dependencies: [1]  # 要件定義書作成に依存
+    dependencies: [1]
   },
   {
     title: "実装",
@@ -41,7 +45,7 @@ tasks_data = [
     urgency: 3,
     ease: 3,
     status: 'todo',
-    dependencies: [2]  # 設計書作成に依存
+    dependencies: [2]
   },
   {
     title: "テスト計画書作成",
@@ -53,7 +57,7 @@ tasks_data = [
     urgency: 3,
     ease: 4,
     status: 'todo',
-    dependencies: [1]  # 要件定義書作成に依存
+    dependencies: [1]
   },
   {
     title: "単体テスト実行",
@@ -65,7 +69,7 @@ tasks_data = [
     urgency: 2,
     ease: 5,
     status: 'todo',
-    dependencies: [3, 4]  # 実装とテスト計画書作成に依存
+    dependencies: [3, 4]
   },
   {
     title: "ドキュメント整理",
@@ -89,18 +93,20 @@ tasks_data = [
     urgency: 2,
     ease: 3,
     status: 'todo',
-    dependencies: [5]  # 単体テスト実行に依存
+    dependencies: [5]
   }
 ]
 
-# タスクを作成
+# タスク作成処理
 created_tasks = []
+
 tasks_data.each_with_index do |task_data, index|
-  # dependenciesの調整（作成されたタスクのIDに合わせる）
+  # 依存タスク ID の調整
   adjusted_dependencies = task_data[:dependencies].map do |dep_index|
     created_tasks[dep_index - 1]&.id
   end.compact
 
+  # Task 作成
   task = Task.create!(
     title: task_data[:title],
     description: task_data[:description],
@@ -111,11 +117,12 @@ tasks_data.each_with_index do |task_data, index|
     urgency: task_data[:urgency],
     ease: task_data[:ease],
     status: task_data[:status],
-    dependencies: adjusted_dependencies
+    dependencies: adjusted_dependencies,
+    user: user  # User を紐付け
   )
 
   created_tasks << task
   puts "Created task: #{task.title}"
 end
 
-puts "Created #{Task.count} tasks successfully!"
+puts "All #{Task.count} tasks created successfully!"

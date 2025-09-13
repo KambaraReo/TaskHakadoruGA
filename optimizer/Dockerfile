@@ -5,7 +5,8 @@ ENV TZ Asia/Tokyo
 # 必ビルドツールを追加
 RUN apt-get update && apt-get install -y \
   build-essential \
-  libatlas-base-dev \
+  libatlas3-base \
+  gfortran \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
