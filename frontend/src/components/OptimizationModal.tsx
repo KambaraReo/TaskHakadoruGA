@@ -419,16 +419,21 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
           </div>
 
           <div className="optimized-task-list">
-            <h4>タスク順序の提案</h4>
+            <div className="task-list-header">
+              <h4>タスク順序の提案</h4>
+              {simpleResult.optimized_tasks.length > 0 && (
+                <div className="overall-score">
+                  優先度スコア:{" "}
+                  {simpleResult.optimized_tasks[0].priority_score.toFixed(2)}
+                </div>
+              )}
+            </div>
             <div className="task-order-list">
               {simpleResult.optimized_tasks.map((task, index) => (
                 <div key={task.id} className="optimized-task-item">
                   <div className="task-rank">{index + 1}</div>
                   <div className="task-info">
                     <div className="task-name">{task.title}</div>
-                    <div className="task-score">
-                      優先度スコア: {task.priority_score.toFixed(2)}
-                    </div>
                   </div>
                   <div className="task-details">
                     <span className="task-duration">

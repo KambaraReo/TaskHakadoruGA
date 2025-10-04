@@ -2038,9 +2038,26 @@ input.auth-form-input {
   color: #654321;
   font-size: 1.1rem;
   font-weight: bold;
+  margin: 0;
+}
+
+.task-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #d2b48c;
+}
+
+.overall-score {
+  font-size: 0.9rem;
+  color: #8b4513;
+  font-weight: 600;
+  background: #f5deb3;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #d2b48c;
 }
 
 .task-order-list {
@@ -2150,6 +2167,16 @@ input.auth-form-input {
 
   .task-rank {
     align-self: flex-start;
+  }
+
+  .task-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .overall-score {
+    align-self: flex-end;
   }
 }
 /* 最適化モーダル - 選択されたタスクのプレビュー */
