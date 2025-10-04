@@ -22,7 +22,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 ### 主な特徴
 
-- **多目的最適化**: 優先度、効率性、制約違反の3つの目的関数を同時に最適化
+- **多目的最適化**: 優先度、効率性、制約違反の 3 つの目的関数を同時に最適化
 - **ユーザー認証**: JWT 認証による安全なユーザー管理
 - **リアルタイム最適化**: FastAPI による高速な最適化処理
 - **直感的 UI**: Next.js + Tailwind CSS によるモダンなユーザーインターフェース
@@ -50,7 +50,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
   <img src="./docs/modal.png" alt="TaskHakadoruGA タスク追加モーダル画面" width="400" />
 </p>
 
-## デモGIF
+## デモ GIF
 
 - 最良解のみ提示
 <p align="left">
@@ -58,10 +58,9 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 </p>
 
 - 複数解を提示
-※ 追加予定
-<!-- <p align="left">
+<p align="left">
   <img src="./docs/demo_2.gif" alt="TaskHakadoruGA デモGIF画像" width="600" />
-</p> -->
+</p>
 
 ## 機能説明
 
@@ -76,7 +75,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 - **タスク作成**: タイトル、説明、重要度、緊急度、難易度、所要時間、必要エネルギーの設定
 - **タスク編集**: 既存タスクの属性変更
 - **タスク削除**: 不要なタスクの削除
-- **ステータス管理**: todo、進行中、完了、キャンセルの4つのステータス
+- **ステータス管理**: todo、進行中、完了、キャンセルの 4 つのステータス
 - **依存関係設定**: タスク間の依存関係の定義
 - **締切設定**: タスクの締切日時の設定
 
@@ -84,7 +83,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 - **NSGA-II 最適化**: 多目的遺伝的アルゴリズムによる最適化
 - **重み調整**: ユーザーによる目的関数の重み設定
-- **複数解提示**: パレート最適解の上位10解を提示
+- **複数解提示**: パレート最適解の上位 10 解を提示
 - **制約考慮**: 依存関係と締切制約を考慮した最適化
 
 ### UI/UX 機能
@@ -118,7 +117,7 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 - **Frontend ↔ Backend**: REST API（JWT 認証）
 - **Backend ↔ Optimizer**: HTTP API（JSON 通信）
 - **Backend ↔ Database**: ActiveRecord ORM
-- **All Services ↔ Database**: MySQL接続
+- **All Services ↔ Database**: MySQL 接続
 
 ## 技術スタック
 
@@ -240,7 +239,7 @@ TaskHakadoruGA/
 
 ### アルゴリズム概要
 
-**NSGA-II（Non-dominated Sorting Genetic Algorithm II）** は、複数の相反する目的を同時に最適化する多目的最適化問題のための最先端の進化的アルゴリズムです。本システムでは、タスクスケジューリングという複雑な問題を、**3つの目的関数を同時に最適化**することで解決しています。
+**NSGA-II（Non-dominated Sorting Genetic Algorithm II）** は、複数の相反する目的を同時に最適化する多目的最適化問題のための最先端の進化的アルゴリズムです。本システムでは、タスクスケジューリングという複雑な問題を、**3 つの目的関数を同時に最適化**することで解決しています。
 
 #### なぜ NSGA-II を選択したのか
 
@@ -251,7 +250,7 @@ TaskHakadoruGA/
 
 ### 目的関数の詳細設計
 
-本システムでは、以下の3つの目的関数を**同時に最適化**します：
+本システムでは、以下の 3 つの目的関数を**同時に最適化**します：
 
 #### 1. 優先度最大化 (Priority Maximization)
 
@@ -274,7 +273,7 @@ def _calculate_priority_objective(self, ordered_tasks: List[Dict]) -> float:
 **特徴:**
 
 - **重要度・緊急度重視**: ユーザーが設定した重要度と緊急度を重み付けで評価
-- **難易度考慮**: 簡単なタスクを優先的に配置（Quick Win戦略）
+- **難易度考慮**: 簡単なタスクを優先的に配置（Quick Win 戦略）
 - **位置ペナルティ**: 重要なタスクが後回しになることを防ぐ
 
 #### 2. 効率性最大化 (Efficiency Maximization)
