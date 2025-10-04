@@ -313,7 +313,7 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
           <div className="optimization-results">
             <div className="results-summary">
               <div className="result-item">
-                <span className="label">選択されたタスク数:</span>
+                <span className="label">選択したタスク数:</span>
                 <span className="value">
                   {optimizationResult.best_solution.task_order.length}個
                 </span>
@@ -330,36 +330,61 @@ export const OptimizationModal: React.FC<OptimizationModalProps> = ({
               </div>
               <div className="result-item">
                 {/* <span className="label">生成された解の数:</span> */}
-                <span className="label">提案するタスク順序（解）の数:</span>
+                <span className="label">タスク順序（解）の提案数:</span>
                 <span className="value">
-                  {/* {optimizationResult.solutions.length}個 */}
-                  {params.maxSolutions}個
+                  {Math.min(
+                    params.maxSolutions,
+                    optimizationResult.solutions.length
+                  )}
+                  個
                 </span>
               </div>
             </div>
 
             <div className="optimized-task-list">
-              <h4>タスク順序の提案（最良解）</h4>
-              <div className="solution-info">
-                <p>
-                  総合スコア:{" "}
-                  {optimizationResult.best_solution.objectives.total_score.toFixed(
-                    2
-                  )}
-                </p>
-              </div>
-              <div className="task-order-list">
-                {optimizationResult.best_solution.task_order.map(
-                  (taskOrder, index) => (
-                    <div key={taskOrder.id} className="optimized-task-item">
-                      <div className="task-rank">{index + 1}</div>
-                      <div className="task-info">
-                        <div className="task-name">{taskOrder.title}</div>
+              <h4>タスク順序の提案</h4>
+              {optimizationResult.solutions
+                .slice(0, params.maxSolutions)
+                .map((solution, solutionIndex) => (
+                  <div
+                    key={solution.solution_id}
+                    className="solution-container"
+                  >
+                    <div className="solution-header">
+                      <h5>
+                        タスク順序の提案 {solutionIndex + 1}
+                        {solution.solution_id ===
+                          optimizationResult.best_solution.solution_id && (
+                          <span className="best-solution-badge">最良解</span>
+                        )}
+                      </h5>
+                      <div className="solution-info">
+                        <p>
+                          総合スコア:{" "}
+                          {solution.objectives.total_score.toFixed(2)}
+                        </p>
+                        <p>
+                          優先度スコア:{" "}
+                          {solution.objectives.priority_score.toFixed(2)}
+                        </p>
+                        <p>
+                          効率スコア:{" "}
+                          {solution.objectives.efficiency_score.toFixed(2)}
+                        </p>
                       </div>
                     </div>
-                  )
-                )}
-              </div>
+                    <div className="task-order-list">
+                      {solution.task_order.map((taskOrder, index) => (
+                        <div key={taskOrder.id} className="optimized-task-item">
+                          <div className="task-rank">{index + 1}</div>
+                          <div className="task-info">
+                            <div className="task-name">{taskOrder.title}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
