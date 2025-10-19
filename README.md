@@ -13,6 +13,7 @@
 - [データベース・テーブル構成](#データベーステーブル構成)
 - [NSGA-II 技術説明](#nsga-ii-技術説明)
 - [起動手順（@開発環境）](#dev-start)
+- [本番環境デプロイメント](#production-deployment)
 - [API 仕様](#api-仕様)
 - [開発・テスト](#開発テスト)
 
@@ -27,6 +28,10 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 - **リアルタイム最適化**: FastAPI による高速な最適化処理
 - **直感的 UI**: Next.js + Tailwind CSS によるモダンなユーザーインターフェース
 - **マイクロサービス構成**: Rails、FastAPI、Next.js の分離されたアーキテクチャ
+
+### URL
+
+- https://https://taskhakadoruga.reokambara.com
 
 ## 画面例
 
@@ -148,8 +153,11 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 ### インフラ・開発環境
 
-- **Docker & Docker Compose**: コンテナ化
+- **Docker & Docker Compose**: コンテナ化・開発環境
+- **Kubernetes**: 本番環境オーケストレーション
 - **MySQL 8.0**: データベース
+- **Traefik**: Ingress Controller・ロードバランサー
+- **cert-manager**: SSL 証明書自動管理
 - **RSpec**: Rails テストフレームワーク
 - **ESLint**: JavaScript リンター
 
@@ -191,7 +199,16 @@ TaskHakadoruGA/
 │   ├── main.py             # FastAPIアプリケーション
 │   ├── optimizer.py        # NSGA-II最適化ロジック
 │   └── requirements.txt    # Python依存関係
-├── docker-compose.yml      # Docker構成
+├── k8s/                    # Kubernetesマニフェスト
+│   ├── namespace.yaml      # 名前空間定義
+│   ├── backend/            # バックエンド関連リソース
+│   ├── frontend/           # フロントエンド関連リソース
+│   ├── optimizer/          # 最適化エンジン関連リソース
+│   ├── database/           # データベース関連リソース
+│   └── ingress.yaml        # Ingress設定
+├── deploy.sh               # 本番デプロイスクリプト
+├── undeploy.sh             # アンデプロイスクリプト
+├── docker-compose.yml      # Docker構成（開発環境）
 ├── .env                    # 環境変数
 └── README.md              # このファイル
 ```
@@ -564,6 +581,114 @@ docker-compose exec backend bash
 bundle exec rails db:drop db:create db:migrate
 ```
 
+## 本番環境デプロイメント<a id="production-deployment"></a>
+
+### Kubernetes クラスターへのデプロイ
+
+本アプリケーションは Kubernetes クラスターでの本番運用に対応しています。
+
+#### 前提条件
+
+- Kubernetes クラスター（k3s、EKS、GKE 等）
+- kubectl コマンドラインツール
+- Docker Hub または他のコンテナレジストリへのアクセス
+- SSL 証明書管理（cert-manager 推奨）
+
+#### デプロイ手順
+
+1. **シークレットファイルの作成**
+
+```bash
+# バックエンド用のシークレット設定
+cp k8s/backend/secret.yaml.example k8s/backend/secret.yaml
+# 適切な値を設定してください
+```
+
+2. **イメージのビルドとプッシュ**
+
+```bash
+# 自動デプロイスクリプトを使用
+./deploy.sh
+
+# または手動でビルド・プッシュ
+docker build --platform linux/amd64 -t your-registry/task-hakadoru-ga-backend:latest ./backend
+docker build --platform linux/amd64 -t your-registry/task-hakadoru-ga-frontend:latest ./frontend
+docker build --platform linux/amd64 -t your-registry/task-hakadoru-ga-optimizer:latest ./optimizer
+
+docker push your-registry/task-hakadoru-ga-backend:latest
+docker push your-registry/task-hakadoru-ga-frontend:latest
+docker push your-registry/task-hakadoru-ga-optimizer:latest
+```
+
+3. **Kubernetes リソースのデプロイ**
+
+```bash
+# 名前空間の作成
+kubectl apply -f k8s/namespace.yaml
+
+# シークレットとConfigMapの適用
+kubectl apply -f k8s/backend/secret.yaml
+kubectl apply -f k8s/backend/configmap.yaml
+
+# データベースのデプロイ
+kubectl apply -f k8s/database/
+
+# アプリケーションのデプロイ
+kubectl apply -f k8s/backend/
+kubectl apply -f k8s/frontend/
+kubectl apply -f k8s/optimizer/
+
+# Ingressの設定
+kubectl apply -f k8s/ingress.yaml
+```
+
+#### 本番環境の構成
+
+```text
+┌─────────────────┐    ┌─────────────────┐
+│   Ingress       │    │   SSL/TLS       │
+│   (Traefik)     │◄──►│  (cert-manager) │
+└─────────────────┘    └─────────────────┘
+         │
+         ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │   Optimizer     │
+│   (Next.js)     │◄──►│    (Rails)      │◄──►│   (FastAPI)     │
+│   Deployment    │    │   Deployment    │    │   Deployment    │
+│   ClusterIP     │    │   ClusterIP     │    │   ClusterIP     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │     MySQL       │
+                    │   Deployment    │
+                    │   ClusterIP     │
+                    │   + PVC         │
+                    └─────────────────┘
+```
+
+#### 運用管理コマンド
+
+```bash
+# デプロイメント状況の確認
+kubectl get pods,svc,ingress -n task-hakadoru-ga
+
+# ログの確認
+kubectl logs -f deployment/backend -n task-hakadoru-ga
+kubectl logs -f deployment/frontend -n task-hakadoru-ga
+kubectl logs -f deployment/optimizer -n task-hakadoru-ga
+
+# スケーリング
+kubectl scale deployment backend --replicas=3 -n task-hakadoru-ga
+
+# ローリングアップデート
+kubectl rollout restart deployment/backend -n task-hakadoru-ga
+
+# アンデプロイ
+./undeploy.sh
+```
+
 ## API 仕様
 
 ### 認証 API
@@ -582,7 +707,7 @@ bundle exec rails db:drop db:create db:migrate
 
 ### 最適化 API
 
-- `POST /optimize` - タスク最適化実行
+- `POST /optimizer/optimize` - タスク最適化実行
 - `GET /health` - ヘルスチェック
 
 ## 開発・テスト
@@ -611,4 +736,5 @@ python test_api.py
 
 ## 備考
 
-本番化未対応のため、ローカル環境で動作をお試しください。
+- ローカル開発環境: Docker Compose を使用
+- 本番環境: Kubernetes クラスターで運用
