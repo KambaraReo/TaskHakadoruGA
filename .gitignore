@@ -74,3 +74,6 @@
 /optimizer/__pycache__/
 /optimizer/.venv/
 /optimizer/.env*
+
+# k8s documents
+k8s/*/secret.yaml
