@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: optimizer-service
+  namespace: task-hakadoru-ga
+  labels:
+    app: optimizer
+spec:
+  selector:
+    app: optimizer
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
+  type: ClusterIP
