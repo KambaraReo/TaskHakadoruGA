@@ -100,7 +100,7 @@ def health_check():
     "version": "1.0.0"
   }
 
-@app.post("/optimize", response_model=Union[OptimizeResponse, dict])
+@app.post("/optimizer/optimize", response_model=Union[OptimizeResponse, dict])
 def optimize_tasks(request: OptimizeRequest):
   """
   タスクの優先順位を最適化するエンドポイント
