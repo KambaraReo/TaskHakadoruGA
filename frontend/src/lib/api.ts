@@ -6,6 +6,7 @@ import {
   MeResponse,
   User,
 } from "@/types/auth";
+import { encodeCredentials } from "./crypto";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -58,6 +59,11 @@ async function fetchApi<T>(
     });
 
     if (!response.ok) {
+      // 401エラーの場合はトークンをクリア
+      if (response.status === 401) {
+        setAuthToken(null);
+      }
+
       // エラーレスポンスの内容を取得
       const errorText = await response.text();
       let errorMessage = `HTTP error! status: ${response.status}`;
@@ -108,14 +114,14 @@ export const authApi = {
   login: (credentials: LoginRequest): Promise<AuthResponse> =>
     fetchApi<AuthResponse>("/auth/login", {
       method: "POST",
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({ data: encodeCredentials(credentials) }),
     }),
 
   // 登録
   register: (userData: RegisterRequest): Promise<AuthResponse> =>
     fetchApi<AuthResponse>("/auth/register", {
       method: "POST",
-      body: JSON.stringify(userData),
+      body: JSON.stringify({ data: encodeCredentials(userData) }),
     }),
 
   // 現在のユーザー情報取得
