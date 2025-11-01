@@ -13,9 +13,19 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const { login } = useAuth();
   const { errors, validateLoginForm, clearErrors } = useAuthValidation();
-  const [formData, setFormData] = useState<LoginRequest>({
-    email: "",
-    password: "",
+  const [formData, setFormData] = useState<LoginRequest>(() => {
+    // 初期化時にlocalStorageからメールアドレスを復元
+    if (typeof window !== "undefined") {
+      const savedEmail = localStorage.getItem("login_email");
+      return {
+        email: savedEmail || "",
+        password: "",
+      };
+    }
+    return {
+      email: "",
+      password: "",
+    };
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,12 +40,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
     setIsLoading(true);
 
     try {
+      // ログイン試行時にメールアドレスを保存
+      if (typeof window !== "undefined") {
+        localStorage.setItem("login_email", formData.email);
+      }
+
       await login(formData);
       toast.success("ログインしました");
+
+      // ログイン成功時はメールアドレスの保存をクリア
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("login_email");
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "ログインに失敗しました";
       toast.error(errorMessage);
+      // ログイン失敗時はパスワードのみクリア、メールアドレスは保持
+      setFormData((prev) => ({ ...prev, password: "" }));
     } finally {
       setIsLoading(false);
     }
