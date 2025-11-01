@@ -1,5 +1,6 @@
 class AuthController < ApplicationController
-  skip_before_action :authenticate_request
+  # login, registerのみ認証をスキップ
+  skip_before_action :authenticate_request, only: [:login, :register]
 
   # POST /auth/register
   def register
@@ -27,6 +28,7 @@ class AuthController < ApplicationController
 
   # GET /auth/me
   def me
+    # ApplicationController の authenticate_request フィルターにより、current_user が自動的に設定される
     render json: { user: user_response(current_user) }, status: :ok
   end
 

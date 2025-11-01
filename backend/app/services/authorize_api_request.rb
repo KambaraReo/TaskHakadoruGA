@@ -31,7 +31,8 @@ class AuthorizeApiRequest
   def decoded_auth_token
     @decoded_auth_token ||= JsonWebToken.decode(http_auth_header)
   rescue StandardError => e
-    raise ExceptionHandler::InvalidToken, e.message
+    Rails.logger.error "Token decode error: #{e.message}"
+    nil
   end
 
   # check for token in `Authorization` header

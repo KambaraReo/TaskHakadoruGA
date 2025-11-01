@@ -95,11 +95,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const token = getAuthToken();
 
     if (!token) {
-      setState((prev) => ({ ...prev, isLoading: false }));
+      // トークンがない場合は未認証
+      setState({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+      });
+
       return;
     }
 
     try {
+      // トークンがある場合はユーザー情報を取得して認証状態を確認
       const user = await authApi.me();
       setState({
         user,
@@ -107,8 +115,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated: true,
         isLoading: false,
       });
-    } catch {
-      // トークンが無効な場合はクリア
+    } catch (error) {
+      // 認証に失敗した場合はトークンを削除
+      console.error("認証チェック失敗:", error);
       setAuthToken(null);
       setState({
         user: null,
@@ -120,6 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
+    // 初期化時に認証チェック
     checkAuth();
   }, []);
 
