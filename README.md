@@ -33,6 +33,11 @@ TaskHakadoruGA は、多目的遺伝的アルゴリズム（NSGA-II）を活用�
 
 - https://https://taskhakadoruga.reokambara.com
 
+※ 以下でログインして試すことができます。
+
+- メールアドレス: guest@example.com
+- パスワード: Password0
+
 ## 画面例
 
 ### ログイン・ユーザー登録画面
