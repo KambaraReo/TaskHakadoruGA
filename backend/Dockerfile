@@ -21,6 +21,11 @@ COPY . /app
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 
+# 非rootユーザーを作成し、適切な権限を設定
+RUN groupadd -r appuser && useradd -r -g appuser -u 1000 appuser
+RUN chown -R appuser:appuser /app
+USER appuser
+
 # エントリーポイントの設定
 ENTRYPOINT ["entrypoint.sh"]
 
