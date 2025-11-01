@@ -7,8 +7,12 @@ set -e
 # 設定
 REGISTRY="sakuraore"  # Docker Hub: yourusername, GitHub: ghcr.io/yourusername
 PROJECT_NAME="task-hakadoru-ga"
-TAG="latest"
+# コミットハッシュをタグとして使用
+COMMIT_HASH=$(git rev-parse --short HEAD)
+TAG="${COMMIT_HASH}"
 SKIP_BUILD=${1:-false}  # 第1引数で --skip-build を指定可能
+
+echo "使用するイメージタグ: ${TAG}"
 
 echo "Task Hakadoru-ga をデプロイしています..."
 
@@ -73,6 +77,14 @@ kubectl apply -f k8s/frontend/service.yaml
 # 6. Ingress
 echo "Ingress を適用中..."
 kubectl apply -f k8s/ingress.yaml
+
+# 7. デプロイメントを再起動
+if [ "$SKIP_BUILD" != "--skip-build" ]; then
+    echo "デプロイメントを再起動して新しいイメージを適用中..."
+    kubectl -n task-hakadoru-ga rollout restart deployment/backend
+    kubectl -n task-hakadoru-ga rollout restart deployment/frontend
+    kubectl -n task-hakadoru-ga rollout restart deployment/optimizer
+fi
 
 echo "デプロイメントの完了を待機中..."
 kubectl wait --for=condition=available deployment/backend -n task-hakadoru-ga --timeout=600s
