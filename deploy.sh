@@ -103,3 +103,4 @@ echo "  Events:    kubectl get events -n task-hakadoru-ga --sort-by='.lastTimest
 # バックアップファイルをクリーンアップ
 echo "バックアップファイルをクリーンアップ中..."
 find k8s -name "*.bak" -delete 2>/dev/null || true
+echo "バックアップファイルをクリーンアップ完了"
